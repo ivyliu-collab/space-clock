@@ -14,7 +14,59 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      punch_records: {
+        Row: {
+          created_at: string
+          end_time: string | null
+          id: string
+          space_id: string
+          start_time: string
+        }
+        Insert: {
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          space_id: string
+          start_time?: string
+        }
+        Update: {
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          space_id?: string
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "punch_records_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["space_id"]
+          },
+        ]
+      }
+      spaces: {
+        Row: {
+          created_at: string
+          daily_goal_hours: number
+          id: string
+          space_id: string
+        }
+        Insert: {
+          created_at?: string
+          daily_goal_hours?: number
+          id?: string
+          space_id: string
+        }
+        Update: {
+          created_at?: string
+          daily_goal_hours?: number
+          id?: string
+          space_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
