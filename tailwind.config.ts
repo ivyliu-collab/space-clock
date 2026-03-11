@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Nunito", "sans-serif"],
+        sans: ["Quicksand", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -60,10 +60,12 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        morandi: {
-          green: "#A3B18A",
-          cream: "#DAD7CD",
-          pink: "#B5838D",
+        candy: {
+          mint: "#C1F0E0",
+          orange: "#FFB347",
+          lemon: "#FDFD96",
+          sky: "#E2EBFF",
+          cream: "#FDFCFB",
         },
       },
       borderRadius: {
