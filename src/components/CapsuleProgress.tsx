@@ -28,7 +28,7 @@ function AnimatedDigit({ digit }: { digit: string }) {
 
 function AnimatedTime({ text }: { text: string }) {
   return (
-    <span className="inline-flex font-mono text-lg font-extrabold text-foreground">
+    <span className="inline-flex font-mono text-lg font-bold text-foreground">
       {text.split("").map((ch, i) => (
         ch === ":" ? <span key={i} className="mx-[1px]">:</span> : <AnimatedDigit key={i} digit={ch} />
       ))}
@@ -42,6 +42,31 @@ function formatDuration(ms: number) {
   const m = Math.floor((totalSeconds % 3600) / 60);
   const s = totalSeconds % 60;
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+}
+
+/* Running person / Rocket SVG based on progress */
+function StatusIcon({ done }: { done: boolean }) {
+  if (done) {
+    return (
+      <motion.span
+        initial={{ scale: 0 }}
+        animate={{ scale: 1, y: [0, -3, 0] }}
+        transition={{ type: "spring", stiffness: 300, damping: 10 }}
+        className="text-2xl"
+      >
+        🚀
+      </motion.span>
+    );
+  }
+  return (
+    <motion.span
+      animate={{ x: [0, 3, 0] }}
+      transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }}
+      className="text-2xl"
+    >
+      🏃
+    </motion.span>
+  );
 }
 
 export default function CapsuleProgress({ startTime, goalHours }: CapsuleProgressProps) {
@@ -62,7 +87,6 @@ export default function CapsuleProgress({ startTime, goalHours }: CapsuleProgres
   const remainH = Math.floor(remaining / 3600000);
   const remainM = Math.floor((remaining % 3600000) / 60000);
 
-  // Estimated end time
   const etaDate = new Date(new Date(startTime).getTime() + goalMs);
   const etaStr = `${String(etaDate.getHours()).padStart(2, "0")}:${String(etaDate.getMinutes()).padStart(2, "0")}`;
 
@@ -76,10 +100,13 @@ export default function CapsuleProgress({ startTime, goalHours }: CapsuleProgres
       animate={{ opacity: 1, y: 0 }}
       className="glass-card p-6 card-hover"
     >
-      {/* Encouragement */}
-      <p className="mb-3 text-center text-sm font-semibold text-secondary">
-        {encouragement}
-      </p>
+      {/* Status icon + encouragement */}
+      <div className="mb-3 flex items-center justify-center gap-2">
+        <StatusIcon done={progress >= 1} />
+        <p className="text-sm font-semibold text-muted-foreground">
+          {encouragement}
+        </p>
+      </div>
 
       {/* Timer & ETA row */}
       <div className="mb-3 flex items-center justify-between">
@@ -89,19 +116,19 @@ export default function CapsuleProgress({ startTime, goalHours }: CapsuleProgres
         </div>
         <div className="text-right">
           <p className="text-xs text-muted-foreground">预计下班时间</p>
-          <p className="text-base font-extrabold text-primary">{etaStr}</p>
+          <p className="text-base font-bold text-secondary">{etaStr}</p>
         </div>
       </div>
 
-      {/* Jelly progress bar */}
+      {/* Mint jelly progress bar */}
       <div className="h-5 overflow-hidden rounded-full bg-muted relative">
         <motion.div
-          className="jelly-bar h-full rounded-full bg-primary relative overflow-hidden"
+          className="jelly-bar h-full rounded-full relative overflow-hidden"
+          style={{ backgroundColor: "#C1F0E0" }}
           initial={{ width: 0 }}
           animate={{ width: `${progress * 100}%` }}
           transition={{ type: "spring", stiffness: 80, damping: 20 }}
         >
-          {/* Shimmer / glow sweep */}
           <span className="shimmer-sweep" />
         </motion.div>
       </div>

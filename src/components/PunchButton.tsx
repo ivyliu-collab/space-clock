@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Play, Square } from "lucide-react";
 import confetti from "canvas-confetti";
@@ -12,21 +12,31 @@ interface PunchButtonProps {
 
 export default function PunchButton({ isActive, onStart, onEnd, loading }: PunchButtonProps) {
   const btnRef = useRef<HTMLButtonElement>(null);
+  const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
 
   const handleClick = () => {
+    // Ripple effect
+    if (btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      const x = rect.width / 2;
+      const y = rect.height / 2;
+      const id = Date.now();
+      setRipples((prev) => [...prev, { id, x, y }]);
+      setTimeout(() => setRipples((prev) => prev.filter((r) => r.id !== id)), 700);
+    }
+
     if (isActive) {
       onEnd();
     } else {
-      // Fire confetti from button position
       if (btnRef.current) {
         const rect = btnRef.current.getBoundingClientRect();
-        const x = (rect.left + rect.width / 2) / window.innerWidth;
-        const y = (rect.top + rect.height / 2) / window.innerHeight;
+        const cx = (rect.left + rect.width / 2) / window.innerWidth;
+        const cy = (rect.top + rect.height / 2) / window.innerHeight;
         confetti({
           particleCount: 60,
           spread: 55,
-          origin: { x, y },
-          colors: ["#A3B18A", "#DAD7CD", "#B5838D", "#FFD6A5", "#CAFFBF"],
+          origin: { x: cx, y: cy },
+          colors: ["#C1F0E0", "#FFB347", "#FDFD96", "#E2EBFF", "#FFDEE2"],
           scalar: 0.8,
           gravity: 0.8,
           ticks: 120,
@@ -45,15 +55,24 @@ export default function PunchButton({ isActive, onStart, onEnd, loading }: Punch
         onClick={handleClick}
         disabled={loading}
         transition={{ type: "spring", stiffness: 400, damping: 15 }}
-        className={`relative flex h-32 w-32 items-center justify-center rounded-full btn-shadow transition-colors ${
+        className={`relative flex h-32 w-32 items-center justify-center rounded-full overflow-hidden btn-shadow transition-colors ${
           isActive
             ? "bg-secondary text-secondary-foreground animate-pulse-soft"
-            : "bg-primary text-primary-foreground"
+            : "bg-secondary text-secondary-foreground"
         }`}
       >
         {isActive ? <Square className="h-10 w-10" /> : <Play className="h-10 w-10 ml-1" />}
 
-        {/* Ripple ring on active */}
+        {/* Ripple rings */}
+        {ripples.map((r) => (
+          <span
+            key={r.id}
+            className="ripple-ring absolute rounded-full bg-card/30"
+            style={{ left: r.x - 60, top: r.y - 60, width: 120, height: 120 }}
+          />
+        ))}
+
+        {/* Active pulse ring */}
         {isActive && (
           <motion.span
             className="absolute inset-0 rounded-full border-2 border-secondary"

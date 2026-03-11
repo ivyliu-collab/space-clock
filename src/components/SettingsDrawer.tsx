@@ -34,8 +34,8 @@ export default function SettingsDrawer({
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed right-0 top-0 z-50 h-full w-80 bg-card p-6 shadow-xl"
-            style={{ borderTopLeftRadius: "1.5rem", borderBottomLeftRadius: "1.5rem" }}
+            className="fixed right-0 top-0 z-50 h-full w-80 glass-card p-6 shadow-xl"
+            style={{ borderTopLeftRadius: "1.5rem", borderBottomLeftRadius: "1.5rem", borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
           >
             <div className="mb-8 flex items-center justify-between">
               <h2 className="text-lg font-bold text-foreground">设置</h2>
@@ -65,9 +65,9 @@ export default function SettingsDrawer({
                   step={0.5}
                   value={goalHours}
                   onChange={(e) => onGoalChange(Number(e.target.value))}
-                  className="flex-1 accent-primary"
+                  className="flex-1 accent-secondary"
                 />
-                <span className="w-12 text-right text-lg font-extrabold text-foreground">
+                <span className="w-12 text-right text-lg font-bold text-foreground">
                   {goalHours}h
                 </span>
               </div>
@@ -75,7 +75,7 @@ export default function SettingsDrawer({
 
             <button
               onClick={onExit}
-              className="w-full rounded-2xl border border-border bg-background py-3 text-sm font-semibold text-muted-foreground transition-colors hover:bg-muted"
+              className="w-full rounded-2xl border border-border bg-card/60 py-3 text-sm font-semibold text-muted-foreground transition-colors hover:bg-muted backdrop-blur-sm"
             >
               退出空间
             </button>

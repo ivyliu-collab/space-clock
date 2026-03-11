@@ -20,11 +20,12 @@ export default function Dashboard({ spaceId, dailyGoal, onGoalChange, onExit }: 
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
-    <div className="relative min-h-screen bg-background">
+    <div className="relative min-h-screen">
       {/* Decorative */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-16 right-0 h-48 w-48 rounded-full bg-primary/8" />
-        <div className="absolute bottom-10 -left-10 h-36 w-36 rounded-3xl bg-secondary/8 rotate-45" />
+        <div className="absolute -top-16 right-0 h-48 w-48 rounded-full bg-candy-mint/20" />
+        <div className="absolute bottom-10 -left-10 h-36 w-36 rounded-3xl bg-candy-orange/10 rotate-45" />
+        <div className="absolute top-1/2 right-1/4 h-24 w-24 rounded-full bg-candy-sky/20" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-md px-4 py-8">
@@ -35,12 +36,12 @@ export default function Dashboard({ spaceId, dailyGoal, onGoalChange, onExit }: 
           className="mb-8 flex items-center justify-between"
         >
           <div>
-            <h1 className="text-xl font-extrabold text-foreground">VibePunch</h1>
+            <h1 className="text-xl font-bold text-foreground">Ding!</h1>
             <p className="text-xs font-semibold text-muted-foreground">{spaceId}</p>
           </div>
           <button
             onClick={() => setSettingsOpen(true)}
-            className="rounded-2xl bg-card p-3 soft-shadow transition-colors hover:bg-muted"
+            className="glass-card p-3 transition-colors hover:bg-muted/50"
           >
             <Settings className="h-5 w-5 text-muted-foreground" />
           </button>
