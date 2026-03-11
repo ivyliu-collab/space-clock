@@ -1,0 +1,53 @@
+import { useState, useEffect, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { getStoredSpaceId, setStoredSpaceId, clearStoredSpaceId } from "@/lib/space";
+
+export function useSpace() {
+  const [spaceId, setSpaceId] = useState<string | null>(getStoredSpaceId());
+  const [dailyGoal, setDailyGoal] = useState(8);
+  const [loading, setLoading] = useState(false);
+
+  const enterSpace = useCallback(async (name: string) => {
+    setLoading(true);
+    try {
+      // Check if space exists
+      const { data } = await supabase
+        .from("spaces")
+        .select("*")
+        .eq("space_id", name)
+        .maybeSingle();
+
+      if (!data) {
+        await supabase.from("spaces").insert({ space_id: name, daily_goal_hours: 8 });
+      } else {
+        setDailyGoal(Number(data.daily_goal_hours));
+      }
+      setStoredSpaceId(name);
+      setSpaceId(name);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const exitSpace = useCallback(() => {
+    clearStoredSpaceId();
+    setSpaceId(null);
+  }, []);
+
+  const updateGoal = useCallback(async (hours: number) => {
+    if (!spaceId) return;
+    setDailyGoal(hours);
+    await supabase.from("spaces").update({ daily_goal_hours: hours }).eq("space_id", spaceId);
+  }, [spaceId]);
+
+  // Load goal on mount
+  useEffect(() => {
+    if (spaceId) {
+      supabase.from("spaces").select("daily_goal_hours").eq("space_id", spaceId).maybeSingle().then(({ data }) => {
+        if (data) setDailyGoal(Number(data.daily_goal_hours));
+      });
+    }
+  }, [spaceId]);
+
+  return { spaceId, dailyGoal, loading, enterSpace, exitSpace, updateGoal };
+}
