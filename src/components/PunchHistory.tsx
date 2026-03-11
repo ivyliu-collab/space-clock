@@ -36,7 +36,7 @@ export default function PunchHistory({ records }: PunchHistoryProps) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
-      className="glass-card p-6"
+      className="glass-card p-6 card-hover"
     >
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-sm font-bold text-foreground">打卡记录</h3>
