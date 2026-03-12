@@ -9,6 +9,24 @@ export interface PunchRecord {
   created_at: string;
 }
 
+/** Check if a date string is from a previous day */
+function isPreviousDay(iso: string): boolean {
+  const d = new Date(iso);
+  const now = new Date();
+  return (
+    d.getFullYear() !== now.getFullYear() ||
+    d.getMonth() !== now.getMonth() ||
+    d.getDate() !== now.getDate()
+  );
+}
+
+/** Get 23:59:59 of the same day as the given date */
+function endOfDay(iso: string): string {
+  const d = new Date(iso);
+  d.setHours(23, 59, 59, 0);
+  return d.toISOString();
+}
+
 export function usePunch(spaceId: string | null) {
   const [records, setRecords] = useState<PunchRecord[]>([]);
   const [activePunch, setActivePunch] = useState<PunchRecord | null>(null);
@@ -21,8 +39,21 @@ export function usePunch(spaceId: string | null) {
       .select("*")
       .eq("space_id", spaceId)
       .order("start_time", { ascending: false });
-    
+
     const recs = (data || []) as PunchRecord[];
+
+    // Auto-close any active punch from a previous day
+    for (const r of recs) {
+      if (!r.end_time && isPreviousDay(r.start_time)) {
+        const autoEnd = endOfDay(r.start_time);
+        await supabase
+          .from("punch_records")
+          .update({ end_time: autoEnd })
+          .eq("id", r.id);
+        r.end_time = autoEnd;
+      }
+    }
+
     setRecords(recs);
     const active = recs.find((r) => !r.end_time);
     setActivePunch(active || null);
@@ -31,6 +62,18 @@ export function usePunch(spaceId: string | null) {
   useEffect(() => {
     fetchRecords();
   }, [fetchRecords]);
+
+  // Midnight auto-close: check every minute
+  useEffect(() => {
+    if (!activePunch) return;
+    const check = () => {
+      if (isPreviousDay(activePunch.start_time)) {
+        fetchRecords();
+      }
+    };
+    const id = setInterval(check, 60_000);
+    return () => clearInterval(id);
+  }, [activePunch, fetchRecords]);
 
   const startPunch = useCallback(async () => {
     if (!spaceId) return;
@@ -59,5 +102,18 @@ export function usePunch(spaceId: string | null) {
     setLoading(false);
   }, [activePunch, fetchRecords]);
 
-  return { records, activePunch, loading, startPunch, endPunch, fetchRecords };
+  const deletePunch = useCallback(async (id: string) => {
+    await supabase.from("punch_records").delete().eq("id", id);
+    await fetchRecords();
+  }, [fetchRecords]);
+
+  const updatePunchTime = useCallback(async (id: string, field: "start_time" | "end_time", value: string) => {
+    await supabase
+      .from("punch_records")
+      .update({ [field]: value })
+      .eq("id", id);
+    await fetchRecords();
+  }, [fetchRecords]);
+
+  return { records, activePunch, loading, startPunch, endPunch, fetchRecords, deletePunch, updatePunchTime };
 }

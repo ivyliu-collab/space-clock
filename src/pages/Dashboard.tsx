@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Settings } from "lucide-react";
+import { Settings, Pencil } from "lucide-react";
 import PunchButton from "@/components/PunchButton";
 import CapsuleProgress from "@/components/CapsuleProgress";
 import WeeklyStats from "@/components/WeeklyStats";
 import PunchHistory from "@/components/PunchHistory";
 import SettingsDrawer from "@/components/SettingsDrawer";
+import TimeEditDialog from "@/components/TimeEditDialog";
 import { usePunch } from "@/hooks/usePunch";
 
 interface DashboardProps {
@@ -16,8 +17,9 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ spaceId, dailyGoal, onGoalChange, onExit }: DashboardProps) {
-  const { records, activePunch, loading, startPunch, endPunch } = usePunch(spaceId);
+  const { records, activePunch, loading, startPunch, endPunch, deletePunch, updatePunchTime } = usePunch(spaceId);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [editingStart, setEditingStart] = useState(false);
 
   return (
     <div className="relative min-h-screen">
@@ -57,9 +59,18 @@ export default function Dashboard({ spaceId, dailyGoal, onGoalChange, onExit }: 
           />
         </div>
 
-        {/* Progress */}
+        {/* Progress with edit button for active punch */}
         {activePunch && (
           <div className="mb-6">
+            <div className="mb-2 flex justify-end">
+              <button
+                onClick={() => setEditingStart(true)}
+                className="flex items-center gap-1 rounded-xl bg-muted/50 px-2.5 py-1 text-xs font-semibold text-muted-foreground transition-colors hover:bg-muted"
+              >
+                <Pencil className="h-3 w-3" />
+                调整开始时间
+              </button>
+            </div>
             <CapsuleProgress startTime={activePunch.start_time} goalHours={dailyGoal} />
           </div>
         )}
@@ -70,7 +81,11 @@ export default function Dashboard({ spaceId, dailyGoal, onGoalChange, onExit }: 
         </div>
 
         {/* History */}
-        <PunchHistory records={records} />
+        <PunchHistory
+          records={records}
+          onDelete={deletePunch}
+          onUpdateTime={updatePunchTime}
+        />
       </div>
 
       <SettingsDrawer
@@ -81,6 +96,20 @@ export default function Dashboard({ spaceId, dailyGoal, onGoalChange, onExit }: 
         spaceId={spaceId}
         onExit={onExit}
       />
+
+      {/* Edit active punch start time */}
+      {activePunch && editingStart && (
+        <TimeEditDialog
+          open
+          title="调整开始时间"
+          initialValue={activePunch.start_time}
+          onSave={(iso) => {
+            updatePunchTime(activePunch.id, "start_time", iso);
+            setEditingStart(false);
+          }}
+          onClose={() => setEditingStart(false)}
+        />
+      )}
     </div>
   );
 }
