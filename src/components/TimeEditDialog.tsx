@@ -38,53 +38,55 @@ export default function TimeEditDialog({ open, title, initialValue, onSave, onCl
             className="fixed inset-0 z-50 bg-foreground/10 backdrop-blur-sm"
           />
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed left-1/2 top-1/2 z-50 w-[320px] -translate-x-1/2 -translate-y-1/2 glass-card p-6"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-sm font-bold text-foreground">{title}</h3>
-              <button onClick={onClose} className="rounded-xl p-1.5 hover:bg-muted transition-colors">
-                <X className="h-4 w-4 text-muted-foreground" />
-              </button>
-            </div>
-
-            <div className="mb-4 space-y-3">
-              <div>
-                <label className="mb-1 block text-xs font-semibold text-muted-foreground">日期</label>
-                <input
-                  type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="w-full rounded-2xl border border-border bg-card/60 px-4 py-2.5 text-sm font-semibold text-foreground outline-none focus:ring-2 focus:ring-ring/40"
-                />
+            <div className="glass-card p-6 w-full max-w-[320px] pointer-events-auto">
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="text-sm font-bold text-foreground">{title}</h3>
+                <button onClick={onClose} className="rounded-xl p-1.5 hover:bg-muted transition-colors">
+                  <X className="h-4 w-4 text-muted-foreground" />
+                </button>
               </div>
-              <div>
-                <label className="mb-1 block text-xs font-semibold text-muted-foreground">时间</label>
-                <input
-                  type="time"
-                  value={time}
-                  onChange={(e) => setTime(e.target.value)}
-                  className="w-full rounded-2xl border border-border bg-card/60 px-4 py-2.5 text-sm font-semibold text-foreground outline-none focus:ring-2 focus:ring-ring/40"
-                />
-              </div>
-            </div>
 
-            <div className="flex gap-2">
-              <button
-                onClick={onClose}
-                className="flex-1 rounded-2xl border border-border bg-card/60 py-2.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-muted"
-              >
-                取消
-              </button>
-              <button
-                onClick={handleSave}
-                className="flex-1 rounded-2xl bg-secondary py-2.5 text-sm font-bold text-secondary-foreground btn-shadow transition-colors hover:bg-secondary/90"
-              >
-                保存
-              </button>
+              <div className="mb-4 space-y-3">
+                <div>
+                  <label className="mb-1 block text-xs font-semibold text-muted-foreground">日期</label>
+                  <input
+                    type="date"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    className="w-full rounded-2xl border border-border bg-card/60 px-4 py-2.5 text-sm font-semibold text-foreground outline-none focus:ring-2 focus:ring-ring/40"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-semibold text-muted-foreground">时间</label>
+                  <input
+                    type="time"
+                    value={time}
+                    onChange={(e) => setTime(e.target.value)}
+                    className="w-full rounded-2xl border border-border bg-card/60 px-4 py-2.5 text-sm font-semibold text-foreground outline-none focus:ring-2 focus:ring-ring/40"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={onClose}
+                  className="flex-1 rounded-2xl border border-border bg-card/60 py-2.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-muted"
+                >
+                  取消
+                </button>
+                <button
+                  onClick={handleSave}
+                  className="flex-1 rounded-2xl bg-secondary py-2.5 text-sm font-bold text-secondary-foreground btn-shadow transition-colors hover:bg-secondary/90"
+                >
+                  保存
+                </button>
+              </div>
             </div>
           </motion.div>
         </>

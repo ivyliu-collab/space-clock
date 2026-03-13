@@ -1,12 +1,14 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Settings, Pencil } from "lucide-react";
+import { useState, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Settings, Pencil, Minimize2 } from "lucide-react";
 import PunchButton from "@/components/PunchButton";
 import CapsuleProgress from "@/components/CapsuleProgress";
 import WeeklyStats from "@/components/WeeklyStats";
 import PunchHistory from "@/components/PunchHistory";
 import SettingsDrawer from "@/components/SettingsDrawer";
 import TimeEditDialog from "@/components/TimeEditDialog";
+import ClockOutCelebration from "@/components/ClockOutCelebration";
+import MiniWidget from "@/components/MiniWidget";
 import { usePunch } from "@/hooks/usePunch";
 
 interface DashboardProps {
@@ -20,6 +22,27 @@ export default function Dashboard({ spaceId, dailyGoal, onGoalChange, onExit }: 
   const { records, activePunch, loading, startPunch, endPunch, deletePunch, updatePunchTime } = usePunch(spaceId);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [editingStart, setEditingStart] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [miniMode, setMiniMode] = useState(false);
+
+  const handleEndPunch = useCallback(async () => {
+    await endPunch();
+    setShowCelebration(true);
+  }, [endPunch]);
+
+  // Mini widget mode - only show when punching and in mini mode
+  if (miniMode && activePunch) {
+    return (
+      <>
+        <MiniWidget
+          startTime={activePunch.start_time}
+          goalHours={dailyGoal}
+          onRestore={() => setMiniMode(false)}
+        />
+        <ClockOutCelebration show={showCelebration} onComplete={() => setShowCelebration(false)} />
+      </>
+    );
+  }
 
   return (
     <div className="relative min-h-screen">
@@ -41,12 +64,24 @@ export default function Dashboard({ spaceId, dailyGoal, onGoalChange, onExit }: 
             <h1 className="text-xl font-bold text-foreground">Ding!</h1>
             <p className="text-xs font-semibold text-muted-foreground">{spaceId}</p>
           </div>
-          <button
-            onClick={() => setSettingsOpen(true)}
-            className="glass-card p-3 transition-colors hover:bg-muted/50"
-          >
-            <Settings className="h-5 w-5 text-muted-foreground" />
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Mini mode button - only on desktop when active */}
+            {activePunch && (
+              <button
+                onClick={() => setMiniMode(true)}
+                className="hidden md:flex glass-card p-3 transition-colors hover:bg-muted/50"
+                title="切换至悬浮窗"
+              >
+                <Minimize2 className="h-5 w-5 text-muted-foreground" />
+              </button>
+            )}
+            <button
+              onClick={() => setSettingsOpen(true)}
+              className="glass-card p-3 transition-colors hover:bg-muted/50"
+            >
+              <Settings className="h-5 w-5 text-muted-foreground" />
+            </button>
+          </div>
         </motion.div>
 
         {/* Punch */}
@@ -54,7 +89,7 @@ export default function Dashboard({ spaceId, dailyGoal, onGoalChange, onExit }: 
           <PunchButton
             isActive={!!activePunch}
             onStart={startPunch}
-            onEnd={endPunch}
+            onEnd={handleEndPunch}
             loading={loading}
           />
         </div>
@@ -110,6 +145,9 @@ export default function Dashboard({ spaceId, dailyGoal, onGoalChange, onExit }: 
           onClose={() => setEditingStart(false)}
         />
       )}
+
+      {/* Clock out celebration */}
+      <ClockOutCelebration show={showCelebration} onComplete={() => setShowCelebration(false)} />
     </div>
   );
 }
