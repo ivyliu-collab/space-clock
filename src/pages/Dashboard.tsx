@@ -1,5 +1,6 @@
-import { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useCallback, useEffect } from "react";
+import { createRoot, Root } from "react-dom/client";
+import { motion } from "framer-motion";
 import { Settings, Pencil, Minimize2 } from "lucide-react";
 import PunchButton from "@/components/PunchButton";
 import CapsuleProgress from "@/components/CapsuleProgress";
@@ -8,8 +9,9 @@ import PunchHistory from "@/components/PunchHistory";
 import SettingsDrawer from "@/components/SettingsDrawer";
 import TimeEditDialog from "@/components/TimeEditDialog";
 import ClockOutCelebration from "@/components/ClockOutCelebration";
-import MiniWidget from "@/components/MiniWidget";
+import PipMiniWidget from "@/components/PipMiniWidget";
 import { usePunch } from "@/hooks/usePunch";
+import { usePictureInPicture } from "@/hooks/usePictureInPicture";
 
 interface DashboardProps {
   spaceId: string;
@@ -23,26 +25,46 @@ export default function Dashboard({ spaceId, dailyGoal, onGoalChange, onExit }: 
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [editingStart, setEditingStart] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
-  const [miniMode, setMiniMode] = useState(false);
+  const { isOpen: pipOpen, openPip, closePip } = usePictureInPicture();
+  const [pipRoot, setPipRoot] = useState<Root | null>(null);
 
   const handleEndPunch = useCallback(async () => {
     await endPunch();
     setShowCelebration(true);
   }, [endPunch]);
 
-  // Mini widget mode - only show when punching and in mini mode
-  if (miniMode && activePunch) {
-    return (
-      <>
-        <MiniWidget
+  // Open PiP window
+  const handleOpenPip = useCallback(async () => {
+    const result = await openPip();
+    if (result) {
+      const root = createRoot(result.container);
+      setPipRoot(root);
+    }
+  }, [openPip]);
+
+  // Render/update PiP content reactively
+  useEffect(() => {
+    if (pipRoot && activePunch) {
+      pipRoot.render(
+        <PipMiniWidget
           startTime={activePunch.start_time}
           goalHours={dailyGoal}
-          onRestore={() => setMiniMode(false)}
+          onRestore={() => {
+            closePip();
+            setPipRoot(null);
+          }}
         />
-        <ClockOutCelebration show={showCelebration} onComplete={() => setShowCelebration(false)} />
-      </>
-    );
-  }
+      );
+    }
+  }, [pipRoot, activePunch, dailyGoal, closePip]);
+
+  // Close PiP when punch ends
+  useEffect(() => {
+    if (!activePunch && pipOpen) {
+      closePip();
+      setPipRoot(null);
+    }
+  }, [activePunch, pipOpen, closePip]);
 
   return (
     <div className="relative min-h-screen">
@@ -65,12 +87,12 @@ export default function Dashboard({ spaceId, dailyGoal, onGoalChange, onExit }: 
             <p className="text-xs font-semibold text-muted-foreground">{spaceId}</p>
           </div>
           <div className="flex items-center gap-2">
-            {/* Mini mode button - only on desktop when active */}
-            {activePunch && (
+            {/* PiP button - show when active punch, desktop only */}
+            {activePunch && !pipOpen && (
               <button
-                onClick={() => setMiniMode(true)}
+                onClick={handleOpenPip}
                 className="hidden md:flex glass-card p-3 transition-colors hover:bg-muted/50"
-                title="切换至悬浮窗"
+                title="画中画悬浮窗"
               >
                 <Minimize2 className="h-5 w-5 text-muted-foreground" />
               </button>
