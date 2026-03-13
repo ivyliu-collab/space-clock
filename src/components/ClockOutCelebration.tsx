@@ -69,7 +69,7 @@ export default function ClockOutCelebration({ show, onComplete }: ClockOutCelebr
             initial={{ scale: 0, rotate: -10 }}
             animate={{
               scale: [0, 1.3, 1],
-              rotate: [−10, 5, 0],
+              rotate: [-10, 5, 0],
             }}
             transition={{ type: "spring", stiffness: 400, damping: 12, delay: 0.05 }}
             className="relative z-10 flex flex-col items-center"
