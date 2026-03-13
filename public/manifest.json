@@ -1,0 +1,17 @@
+{
+  "name": "Ding! 打卡助手",
+  "short_name": "Ding!",
+  "description": "再也不用担心算不清打卡时间啦",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FDFCFB",
+  "theme_color": "#C1F0E0",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}
