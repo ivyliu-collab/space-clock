@@ -137,7 +137,7 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
 
         {/* Weekly */}
         <div className="mb-6">
-          <WeeklyStats records={records} goalHours={dailyGoal} />
+          <WeeklyStats records={records} goalHours={dailyGoal} goalStartTime={schedule.goalStartTime} goalEndTime={schedule.goalEndTime} />
         </div>
 
         {/* History */}
