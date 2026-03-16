@@ -15,8 +15,7 @@ function formatDuration(ms: number) {
 }
 
 /**
- * Lightweight widget rendered inside PiP window.
- * Uses inline styles since Tailwind may not be fully available in the PiP document.
+ * PiP widget — prominent remaining countdown, small elapsed at bottom-left.
  */
 export default function PipMiniWidget({ startTime, goalHours, onRestore }: PipMiniWidgetProps) {
   const [elapsed, setElapsed] = useState(0);
@@ -37,9 +36,6 @@ export default function PipMiniWidget({ startTime, goalHours, onRestore }: PipMi
   const etaDate = new Date(new Date(startTime).getTime() + goalMs);
   const etaStr = `${String(etaDate.getHours()).padStart(2, "0")}:${String(etaDate.getMinutes()).padStart(2, "0")}`;
 
-  const remainH = Math.floor(remaining / 3600000);
-  const remainM = Math.floor((remaining % 3600000) / 60000);
-
   return (
     <div
       style={{
@@ -52,7 +48,7 @@ export default function PipMiniWidget({ startTime, goalHours, onRestore }: PipMi
       }}
     >
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <span style={{ fontSize: "13px", fontWeight: 700, color: "hsl(35, 80%, 55%)" }}>Ding!</span>
           <span style={{ fontSize: "10px", fontWeight: 600, color: "hsl(220, 10%, 50%)" }}>工作中</span>
@@ -75,18 +71,21 @@ export default function PipMiniWidget({ startTime, goalHours, onRestore }: PipMi
         </button>
       </div>
 
-      {/* Timer */}
-      <div style={{ textAlign: "center", marginBottom: "10px" }}>
+      {/* Remaining countdown — prominent */}
+      <div style={{ textAlign: "center", marginBottom: "4px" }}>
+        <div style={{ fontSize: "10px", fontWeight: 600, color: "hsl(220, 10%, 50%)", marginBottom: "2px" }}>
+          {done ? "🎉 已超出目标" : "距离下班还有"}
+        </div>
         <span
           style={{
             fontFamily: "monospace",
             fontSize: "32px",
             fontWeight: 700,
-            color: "hsl(230, 15%, 25%)",
+            color: done ? "hsl(35, 80%, 55%)" : "hsl(230, 15%, 25%)",
             letterSpacing: "0.05em",
           }}
         >
-          {formatDuration(elapsed)}
+          {done ? formatDuration(elapsed - goalMs) : formatDuration(remaining)}
         </span>
       </div>
 
@@ -97,7 +96,7 @@ export default function PipMiniWidget({ startTime, goalHours, onRestore }: PipMi
           borderRadius: "9999px",
           background: "hsl(220, 20%, 94%)",
           overflow: "hidden",
-          marginBottom: "10px",
+          marginBottom: "8px",
           position: "relative",
         }}
       >
@@ -108,15 +107,17 @@ export default function PipMiniWidget({ startTime, goalHours, onRestore }: PipMi
             background: done
               ? "linear-gradient(90deg, hsl(35, 80%, 70%), hsl(35, 90%, 60%))"
               : "linear-gradient(90deg, hsl(160, 40%, 82%), hsl(160, 50%, 72%))",
-            width: `${progress * 100}%`,
+            width: `${Math.min(progress * 100, 100)}%`,
             transition: "width 1s ease",
           }}
         />
       </div>
 
-      {/* Info */}
-      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", fontWeight: 600, color: "hsl(220, 10%, 50%)" }}>
-        <span>{done ? "🎉 目标达成！" : `剩余 ${remainH}h ${remainM}m`}</span>
+      {/* Bottom row: elapsed (left), ETA (right) */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "11px", fontWeight: 600, color: "hsl(220, 10%, 50%)" }}>
+        <span>
+          已打卡 <span style={{ fontFamily: "monospace", fontWeight: 700, color: "hsl(230, 15%, 25%)" }}>{formatDuration(elapsed)}</span>
+        </span>
         <span>
           预计 <span style={{ color: "hsl(35, 80%, 55%)", fontWeight: 700 }}>{etaStr}</span> 下班
         </span>
