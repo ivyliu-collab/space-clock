@@ -1,24 +1,12 @@
-import { useMemo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Clock } from "lucide-react";
+import { useMemo } from "react";
+import { motion } from "framer-motion";
 import type { PunchRecord } from "@/hooks/usePunch";
 
 interface WeeklyStatsProps {
   records: PunchRecord[];
   goalHours: number;
-}
-
-/* Persist goal schedule in localStorage */
-function getGoalSchedule(): { start: string; end: string } {
-  try {
-    const raw = localStorage.getItem("ding_goal_schedule");
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return { start: "09:30", end: "18:30" };
-}
-
-function setGoalSchedule(s: { start: string; end: string }) {
-  localStorage.setItem("ding_goal_schedule", JSON.stringify(s));
+  goalStartTime: string;
+  goalEndTime: string;
 }
 
 function getWeekDays() {
@@ -34,7 +22,6 @@ function getWeekDays() {
   });
 }
 
-/** Parse "HH:MM" to minutes since midnight */
 function parseTime(t: string): number {
   const [h, m] = t.split(":").map(Number);
   return h * 60 + m;
@@ -42,7 +29,6 @@ function parseTime(t: string): number {
 
 const DAY_LABELS = ["一", "二", "三", "四", "五"];
 
-/* Cute sleeping cat SVG for empty state */
 function SleepingCat() {
   return (
     <svg viewBox="0 0 120 80" className="mx-auto h-20 w-20 opacity-60" fill="none">
@@ -61,21 +47,16 @@ function SleepingCat() {
   );
 }
 
-export default function WeeklyStats({ records, goalHours }: WeeklyStatsProps) {
-  const [schedule, setScheduleState] = useState(getGoalSchedule);
-  const [showSettings, setShowSettings] = useState(false);
-
+export default function WeeklyStats({ records, goalHours, goalStartTime, goalEndTime }: WeeklyStatsProps) {
   const weekDays = useMemo(() => getWeekDays(), []);
 
-  const goalStartMin = parseTime(schedule.start);
-  const goalEndMin = parseTime(schedule.end);
+  const goalStartMin = parseTime(goalStartTime);
+  const goalEndMin = parseTime(goalEndTime);
 
-  // The visible timeline window: 1h before goal start to 1h after goal end
   const viewStart = Math.max(goalStartMin - 60, 0);
   const viewEnd = Math.min(goalEndMin + 60, 24 * 60);
   const viewSpan = viewEnd - viewStart;
 
-  /** For each weekday, find earliest start and latest end (in minutes since midnight) */
   const dailyIntervals = useMemo(() => {
     return weekDays.map((dayStart) => {
       const dayEnd = new Date(dayStart);
@@ -129,14 +110,6 @@ export default function WeeklyStats({ records, goalHours }: WeeklyStatsProps) {
     return daysWithData > 0 ? (totalMs / daysWithData / 3600000).toFixed(1) : "0";
   }, [records, weekDays]);
 
-  function handleSave(start: string, end: string) {
-    const newSchedule = { start, end };
-    setScheduleState(newSchedule);
-    setGoalSchedule(newSchedule);
-    setShowSettings(false);
-  }
-
-  /** Convert minutes to position percentage within the view */
   function toPercent(min: number): number {
     return ((min - viewStart) / viewSpan) * 100;
   }
@@ -150,38 +123,10 @@ export default function WeeklyStats({ records, goalHours }: WeeklyStatsProps) {
     >
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-sm font-bold text-foreground">本周概览</h3>
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-muted-foreground">
-            周均 {weekAvg}h
-          </span>
-          <button
-            onClick={() => setShowSettings(!showSettings)}
-            className="rounded-xl p-1.5 transition-colors hover:bg-muted/60"
-            title="目标时间设置"
-          >
-            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-          </button>
-        </div>
+        <span className="text-xs font-semibold text-muted-foreground">
+          周均 {weekAvg}h
+        </span>
       </div>
-
-      {/* Goal time settings panel */}
-      <AnimatePresence>
-        {showSettings && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden"
-          >
-            <GoalSettings
-              start={schedule.start}
-              end={schedule.end}
-              onSave={handleSave}
-              onCancel={() => setShowSettings(false)}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {!hasData ? (
         <div className="flex flex-col items-center gap-2 py-4">
@@ -208,12 +153,12 @@ export default function WeeklyStats({ records, goalHours }: WeeklyStatsProps) {
                   {DAY_LABELS[i]}
                 </span>
                 <div className="relative h-5 flex-1 rounded-full bg-muted/40 overflow-hidden">
-                  {/* Goal range (底色条) */}
+                  {/* Goal range */}
                   <div
                     className="absolute inset-y-0 rounded-full bg-primary/25"
                     style={{ left: `${goalLeft}%`, width: `${goalWidth}%` }}
                   />
-                  {/* Actual range (高亮色条) */}
+                  {/* Actual range */}
                   {interval && (
                     <motion.div
                       initial={{ scaleX: 0 }}
@@ -231,7 +176,7 @@ export default function WeeklyStats({ records, goalHours }: WeeklyStatsProps) {
               </div>
             );
           })}
-          {/* Subtle time markers */}
+          {/* Time markers */}
           <div className="flex items-center gap-2">
             <span className="w-4" />
             <div className="relative flex-1 h-3">
@@ -239,73 +184,18 @@ export default function WeeklyStats({ records, goalHours }: WeeklyStatsProps) {
                 className="absolute text-[9px] font-semibold text-muted-foreground/60 -translate-x-1/2"
                 style={{ left: `${toPercent(goalStartMin)}%` }}
               >
-                {schedule.start}
+                {goalStartTime}
               </span>
               <span
                 className="absolute text-[9px] font-semibold text-muted-foreground/60 -translate-x-1/2"
                 style={{ left: `${toPercent(goalEndMin)}%` }}
               >
-                {schedule.end}
+                {goalEndTime}
               </span>
             </div>
           </div>
         </div>
       )}
     </motion.div>
-  );
-}
-
-/* ---------- Goal settings sub-component ---------- */
-function GoalSettings({
-  start,
-  end,
-  onSave,
-  onCancel,
-}: {
-  start: string;
-  end: string;
-  onSave: (s: string, e: string) => void;
-  onCancel: () => void;
-}) {
-  const [s, setS] = useState(start);
-  const [e, setE] = useState(end);
-
-  return (
-    <div className="mb-4 rounded-2xl bg-muted/40 p-3">
-      <div className="flex items-center gap-3 mb-2">
-        <label className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
-          上班
-          <input
-            type="time"
-            value={s}
-            onChange={(ev) => setS(ev.target.value)}
-            className="rounded-lg bg-background/80 px-2 py-1 text-xs font-semibold text-foreground border border-border outline-none"
-          />
-        </label>
-        <label className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
-          下班
-          <input
-            type="time"
-            value={e}
-            onChange={(ev) => setE(ev.target.value)}
-            className="rounded-lg bg-background/80 px-2 py-1 text-xs font-semibold text-foreground border border-border outline-none"
-          />
-        </label>
-      </div>
-      <div className="flex gap-2 justify-end">
-        <button
-          onClick={onCancel}
-          className="rounded-xl px-3 py-1 text-xs font-semibold text-muted-foreground hover:bg-muted/60 transition-colors"
-        >
-          取消
-        </button>
-        <button
-          onClick={() => onSave(s, e)}
-          className="rounded-xl bg-secondary/80 px-3 py-1 text-xs font-bold text-secondary-foreground hover:bg-secondary transition-colors"
-        >
-          保存
-        </button>
-      </div>
-    </div>
   );
 }
