@@ -12,15 +12,18 @@ import ClockOutCelebration from "@/components/ClockOutCelebration";
 import PipMiniWidget from "@/components/PipMiniWidget";
 import { usePunch } from "@/hooks/usePunch";
 import { usePictureInPicture } from "@/hooks/usePictureInPicture";
+import type { SpaceSchedule } from "@/hooks/useSpace";
 
 interface DashboardProps {
   spaceId: string;
   dailyGoal: number;
+  schedule: SpaceSchedule;
   onGoalChange: (h: number) => void;
+  onScheduleChange: (s: SpaceSchedule) => void;
   onExit: () => void;
 }
 
-export default function Dashboard({ spaceId, dailyGoal, onGoalChange, onExit }: DashboardProps) {
+export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, onScheduleChange, onExit }: DashboardProps) {
   const { records, activePunch, loading, startPunch, endPunch, deletePunch, updatePunchTime } = usePunch(spaceId);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [editingStart, setEditingStart] = useState(false);
@@ -134,7 +137,7 @@ export default function Dashboard({ spaceId, dailyGoal, onGoalChange, onExit }: 
 
         {/* Weekly */}
         <div className="mb-6">
-          <WeeklyStats records={records} goalHours={dailyGoal} />
+          <WeeklyStats records={records} goalHours={dailyGoal} goalStartTime={schedule.goalStartTime} goalEndTime={schedule.goalEndTime} />
         </div>
 
         {/* History */}
@@ -150,6 +153,8 @@ export default function Dashboard({ spaceId, dailyGoal, onGoalChange, onExit }: 
         onClose={() => setSettingsOpen(false)}
         goalHours={dailyGoal}
         onGoalChange={onGoalChange}
+        schedule={schedule}
+        onScheduleChange={onScheduleChange}
         spaceId={spaceId}
         onExit={onExit}
       />

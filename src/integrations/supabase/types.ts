@@ -50,18 +50,24 @@ export type Database = {
         Row: {
           created_at: string
           daily_goal_hours: number
+          goal_end_time: string
+          goal_start_time: string
           id: string
           space_id: string
         }
         Insert: {
           created_at?: string
           daily_goal_hours?: number
+          goal_end_time?: string
+          goal_start_time?: string
           id?: string
           space_id: string
         }
         Update: {
           created_at?: string
           daily_goal_hours?: number
+          goal_end_time?: string
+          goal_start_time?: string
           id?: string
           space_id?: string
         }
