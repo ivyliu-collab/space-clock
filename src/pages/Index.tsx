@@ -23,7 +23,9 @@ const Index = () => {
           <Dashboard
             spaceId={spaceId}
             dailyGoal={dailyGoal}
+            schedule={schedule}
             onGoalChange={updateGoal}
+            onScheduleChange={updateSchedule}
             onExit={exitSpace}
           />
         </motion.div>

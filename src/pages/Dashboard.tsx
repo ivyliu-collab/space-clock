@@ -23,7 +23,7 @@ interface DashboardProps {
   onExit: () => void;
 }
 
-export default function Dashboard({ spaceId, dailyGoal, onGoalChange, onExit }: DashboardProps) {
+export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, onScheduleChange, onExit }: DashboardProps) {
   const { records, activePunch, loading, startPunch, endPunch, deletePunch, updatePunchTime } = usePunch(spaceId);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [editingStart, setEditingStart] = useState(false);
