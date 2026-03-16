@@ -153,6 +153,8 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
         onClose={() => setSettingsOpen(false)}
         goalHours={dailyGoal}
         onGoalChange={onGoalChange}
+        schedule={schedule}
+        onScheduleChange={onScheduleChange}
         spaceId={spaceId}
         onExit={onExit}
       />
