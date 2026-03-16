@@ -12,11 +12,14 @@ import ClockOutCelebration from "@/components/ClockOutCelebration";
 import PipMiniWidget from "@/components/PipMiniWidget";
 import { usePunch } from "@/hooks/usePunch";
 import { usePictureInPicture } from "@/hooks/usePictureInPicture";
+import type { SpaceSchedule } from "@/hooks/useSpace";
 
 interface DashboardProps {
   spaceId: string;
   dailyGoal: number;
+  schedule: SpaceSchedule;
   onGoalChange: (h: number) => void;
+  onScheduleChange: (s: SpaceSchedule) => void;
   onExit: () => void;
 }
 
