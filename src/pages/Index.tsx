@@ -4,7 +4,7 @@ import Dashboard from "@/pages/Dashboard";
 import { AnimatePresence, motion } from "framer-motion";
 
 const Index = () => {
-  const { spaceId, dailyGoal, loading, enterSpace, exitSpace, updateGoal } = useSpace();
+  const { spaceId, dailyGoal, schedule, loading, enterSpace, exitSpace, updateGoal, updateSchedule } = useSpace();
 
   return (
     <AnimatePresence mode="wait">
