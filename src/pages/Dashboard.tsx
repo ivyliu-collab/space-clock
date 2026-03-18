@@ -142,11 +142,28 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
           <WeeklyStats records={records} goalHours={dailyGoal} goalStartTime={schedule.goalStartTime} goalEndTime={schedule.goalEndTime} />
         </div>
 
-        {/* History */}
+        {/* History with add punch button */}
+        <div className="mb-2 flex justify-end">
+          <button
+            onClick={() => setAddPunchOpen(true)}
+            className="flex items-center gap-1 rounded-xl bg-muted/50 px-2.5 py-1 text-xs font-semibold text-muted-foreground transition-colors hover:bg-muted"
+          >
+            <Plus className="h-3 w-3" />
+            补打卡
+          </button>
+        </div>
         <PunchHistory
           records={records}
           onDelete={deletePunch}
           onUpdateTime={updatePunchTime}
+        />
+
+        {/* Add punch dialog */}
+        <AddPunchDialog
+          open={addPunchOpen}
+          onClose={() => setAddPunchOpen(false)}
+          onSave={addManualPunch}
+          records={records}
         />
       </div>
 
