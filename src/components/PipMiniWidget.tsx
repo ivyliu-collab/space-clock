@@ -50,8 +50,8 @@ export default function PipMiniWidget({ startTime, goalHours, onRestore }: PipMi
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <span style={{ fontSize: "13px", fontWeight: 700, color: "hsl(35, 80%, 55%)" }}>Ding!</span>
-          <span style={{ fontSize: "10px", fontWeight: 600, color: "hsl(220, 10%, 50%)" }}>工作中</span>
+          <span style={{ fontSize: "13px", fontWeight: 700, color: "hsl(35, 80%, 55%)", fontFamily: "inherit" }}>Ding!</span>
+          <span style={{ fontSize: "10px", fontWeight: 600, color: "hsl(220, 10%, 50%)", fontFamily: "inherit" }}>工作中</span>
         </div>
         <button
           onClick={onRestore}
