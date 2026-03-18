@@ -40,7 +40,7 @@ export default function PipMiniWidget({ startTime, goalHours, onRestore }: PipMi
     <div
       style={{
         padding: "16px",
-        fontFamily: "'Quicksand', sans-serif",
+        fontFamily: "'Quicksand', 'SF Pro Display', 'Segoe UI', system-ui, sans-serif",
         background: "linear-gradient(135deg, #FDFCFB 0%, #E2EBFF 100%)",
         minHeight: "100vh",
         boxSizing: "border-box",
