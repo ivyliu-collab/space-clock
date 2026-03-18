@@ -78,7 +78,7 @@ export default function PipMiniWidget({ startTime, goalHours, onRestore }: PipMi
         </div>
         <span
           style={{
-            fontFamily: "monospace",
+            fontFamily: "'SF Mono', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace",
             fontSize: "32px",
             fontWeight: 700,
             color: done ? "hsl(35, 80%, 55%)" : "hsl(230, 15%, 25%)",
