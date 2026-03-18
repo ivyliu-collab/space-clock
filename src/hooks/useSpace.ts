@@ -13,7 +13,16 @@ export function useSpace() {
   const [schedule, setSchedule] = useState<SpaceSchedule>({ goalStartTime: "10:00", goalEndTime: "19:30" });
   const [loading, setLoading] = useState(false);
 
-  const enterSpace = useCallback(async (name: string) => {
+  const checkSpaceExists = useCallback(async (name: string): Promise<boolean> => {
+    const { data } = await supabase
+      .from("spaces")
+      .select("space_id")
+      .eq("space_id", name)
+      .maybeSingle();
+    return !!data;
+  }, []);
+
+  const enterSpace = useCallback(async (name: string, forceCreate = false) => {
     setLoading(true);
     try {
       const { data } = await supabase
@@ -76,5 +85,5 @@ export function useSpace() {
     }
   }, [spaceId]);
 
-  return { spaceId, dailyGoal, schedule, loading, enterSpace, exitSpace, updateGoal, updateSchedule };
+  return { spaceId, dailyGoal, schedule, loading, enterSpace, exitSpace, updateGoal, updateSchedule, checkSpaceExists };
 }
