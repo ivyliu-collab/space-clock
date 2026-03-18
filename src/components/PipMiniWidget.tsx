@@ -114,12 +114,12 @@ export default function PipMiniWidget({ startTime, goalHours, onRestore }: PipMi
       </div>
 
       {/* Bottom row: elapsed (left), ETA (right) */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "11px", fontWeight: 600, color: "hsl(220, 10%, 50%)" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "11px", fontWeight: 600, color: "hsl(220, 10%, 50%)", fontFamily: "inherit" }}>
         <span>
-          已打卡 <span style={{ fontFamily: "monospace", fontWeight: 700, color: "hsl(230, 15%, 25%)" }}>{formatDuration(elapsed)}</span>
+          已打卡 <span style={{ fontFamily: "'SF Mono', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace", fontWeight: 700, color: "hsl(230, 15%, 25%)" }}>{formatDuration(elapsed)}</span>
         </span>
         <span>
-          预计 <span style={{ color: "hsl(35, 80%, 55%)", fontWeight: 700 }}>{etaStr}</span> 下班
+          预计 <span style={{ fontFamily: "'SF Mono', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace", color: "hsl(35, 80%, 55%)", fontWeight: 700 }}>{etaStr}</span> 下班
         </span>
       </div>
     </div>

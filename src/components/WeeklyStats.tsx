@@ -128,6 +128,13 @@ export default function WeeklyStats({ records, goalHours, goalStartTime, goalEnd
         </span>
       </div>
 
+      {/* Weekly remaining prediction */}
+      {weeklyRemainingMsg && (
+        <div className="mb-3 rounded-2xl bg-secondary/10 px-4 py-2.5">
+          <p className="text-xs font-semibold text-secondary">💡 {weeklyRemainingMsg}</p>
+        </div>
+      )}
+
       {!hasData ? (
         <div className="flex flex-col items-center gap-2 py-4">
           <SleepingCat />
