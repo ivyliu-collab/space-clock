@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { createRoot, Root } from "react-dom/client";
 import { motion } from "framer-motion";
-import { Settings, Pencil, Minimize2 } from "lucide-react";
+import { Settings, Pencil, Minimize2, Plus } from "lucide-react";
 import PunchButton from "@/components/PunchButton";
 import CapsuleProgress from "@/components/CapsuleProgress";
 import WeeklyStats from "@/components/WeeklyStats";
@@ -10,6 +10,7 @@ import SettingsDrawer from "@/components/SettingsDrawer";
 import TimeEditDialog from "@/components/TimeEditDialog";
 import ClockOutCelebration from "@/components/ClockOutCelebration";
 import PipMiniWidget from "@/components/PipMiniWidget";
+import AddPunchDialog from "@/components/AddPunchDialog";
 import { usePunch } from "@/hooks/usePunch";
 import { usePictureInPicture } from "@/hooks/usePictureInPicture";
 import type { SpaceSchedule } from "@/hooks/useSpace";
@@ -24,10 +25,11 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, onScheduleChange, onExit }: DashboardProps) {
-  const { records, activePunch, loading, startPunch, endPunch, deletePunch, updatePunchTime } = usePunch(spaceId);
+  const { records, activePunch, loading, startPunch, endPunch, deletePunch, updatePunchTime, addManualPunch } = usePunch(spaceId);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [editingStart, setEditingStart] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [addPunchOpen, setAddPunchOpen] = useState(false);
   const { isOpen: pipOpen, openPip, closePip } = usePictureInPicture();
   const [pipRoot, setPipRoot] = useState<Root | null>(null);
 
@@ -140,11 +142,28 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
           <WeeklyStats records={records} goalHours={dailyGoal} goalStartTime={schedule.goalStartTime} goalEndTime={schedule.goalEndTime} />
         </div>
 
-        {/* History */}
+        {/* History with add punch button */}
+        <div className="mb-2 flex justify-end">
+          <button
+            onClick={() => setAddPunchOpen(true)}
+            className="flex items-center gap-1 rounded-xl bg-muted/50 px-2.5 py-1 text-xs font-semibold text-muted-foreground transition-colors hover:bg-muted"
+          >
+            <Plus className="h-3 w-3" />
+            补打卡
+          </button>
+        </div>
         <PunchHistory
           records={records}
           onDelete={deletePunch}
           onUpdateTime={updatePunchTime}
+        />
+
+        {/* Add punch dialog */}
+        <AddPunchDialog
+          open={addPunchOpen}
+          onClose={() => setAddPunchOpen(false)}
+          onSave={addManualPunch}
+          records={records}
         />
       </div>
 

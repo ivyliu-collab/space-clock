@@ -86,7 +86,7 @@ export default function WeeklyStats({ records, goalHours, goalStartTime, goalEnd
 
   const hasData = dailyIntervals.some((d) => d !== null);
 
-  const weekAvg = useMemo(() => {
+  const { weekAvg, weeklyRemainingMsg } = useMemo(() => {
     let totalMs = 0;
     let daysWithData = 0;
     weekDays.forEach((dayStart) => {
@@ -107,8 +107,34 @@ export default function WeeklyStats({ records, goalHours, goalStartTime, goalEnd
         daysWithData++;
       }
     });
-    return daysWithData > 0 ? (totalMs / daysWithData / 3600000).toFixed(1) : "0";
-  }, [records, weekDays]);
+
+    const totalWorkedHours = totalMs / 3600000;
+    const weeklyGoal = goalHours * 5;
+    const remaining = weeklyGoal - totalWorkedHours;
+
+    const now = new Date();
+    const todayDow = now.getDay();
+    const friday = weekDays[4];
+    const isFridayOrLater = todayDow >= 5 || todayDow === 0;
+
+    let weeklyRemainingMsg = "";
+    if (remaining > 0) {
+      const fridayEnd = new Date(friday);
+      fridayEnd.setDate(friday.getDate() + 1);
+      const hasFridayActivePunch = records.some(
+        (r) => !r.end_time && new Date(r.start_time) >= friday && new Date(r.start_time) < fridayEnd
+      );
+
+      if (!(isFridayOrLater && hasFridayActivePunch)) {
+        weeklyRemainingMsg = `本周还需打卡 ${remaining.toFixed(1)} 小时才能达到目标工时！`;
+      }
+    }
+
+    return {
+      weekAvg: daysWithData > 0 ? (totalMs / daysWithData / 3600000).toFixed(1) : "0",
+      weeklyRemainingMsg,
+    };
+  }, [records, weekDays, goalHours]);
 
   function toPercent(min: number): number {
     return ((min - viewStart) / viewSpan) * 100;
@@ -127,6 +153,13 @@ export default function WeeklyStats({ records, goalHours, goalStartTime, goalEnd
           周均 {weekAvg}h
         </span>
       </div>
+
+      {/* Weekly remaining prediction */}
+      {weeklyRemainingMsg && (
+        <div className="mb-3 rounded-2xl bg-secondary/10 px-4 py-2.5">
+          <p className="text-xs font-semibold text-secondary">💡 {weeklyRemainingMsg}</p>
+        </div>
+      )}
 
       {!hasData ? (
         <div className="flex flex-col items-center gap-2 py-4">

@@ -40,7 +40,7 @@ export default function PipMiniWidget({ startTime, goalHours, onRestore }: PipMi
     <div
       style={{
         padding: "16px",
-        fontFamily: "'Quicksand', sans-serif",
+        fontFamily: "'Quicksand', 'SF Pro Display', 'Segoe UI', system-ui, sans-serif",
         background: "linear-gradient(135deg, #FDFCFB 0%, #E2EBFF 100%)",
         minHeight: "100vh",
         boxSizing: "border-box",
@@ -50,8 +50,8 @@ export default function PipMiniWidget({ startTime, goalHours, onRestore }: PipMi
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <span style={{ fontSize: "13px", fontWeight: 700, color: "hsl(35, 80%, 55%)" }}>Ding!</span>
-          <span style={{ fontSize: "10px", fontWeight: 600, color: "hsl(220, 10%, 50%)" }}>工作中</span>
+          <span style={{ fontSize: "13px", fontWeight: 700, color: "hsl(35, 80%, 55%)", fontFamily: "inherit" }}>Ding!</span>
+          <span style={{ fontSize: "10px", fontWeight: 600, color: "hsl(220, 10%, 50%)", fontFamily: "inherit" }}>工作中</span>
         </div>
         <button
           onClick={onRestore}
@@ -78,7 +78,7 @@ export default function PipMiniWidget({ startTime, goalHours, onRestore }: PipMi
         </div>
         <span
           style={{
-            fontFamily: "monospace",
+            fontFamily: "'SF Mono', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace",
             fontSize: "32px",
             fontWeight: 700,
             color: done ? "hsl(35, 80%, 55%)" : "hsl(230, 15%, 25%)",
@@ -114,12 +114,12 @@ export default function PipMiniWidget({ startTime, goalHours, onRestore }: PipMi
       </div>
 
       {/* Bottom row: elapsed (left), ETA (right) */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "11px", fontWeight: 600, color: "hsl(220, 10%, 50%)" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "11px", fontWeight: 600, color: "hsl(220, 10%, 50%)", fontFamily: "inherit" }}>
         <span>
-          已打卡 <span style={{ fontFamily: "monospace", fontWeight: 700, color: "hsl(230, 15%, 25%)" }}>{formatDuration(elapsed)}</span>
+          已打卡 <span style={{ fontFamily: "'SF Mono', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace", fontWeight: 700, color: "hsl(230, 15%, 25%)" }}>{formatDuration(elapsed)}</span>
         </span>
         <span>
-          预计 <span style={{ color: "hsl(35, 80%, 55%)", fontWeight: 700 }}>{etaStr}</span> 下班
+          预计 <span style={{ fontFamily: "'SF Mono', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace", color: "hsl(35, 80%, 55%)", fontWeight: 700 }}>{etaStr}</span> 下班
         </span>
       </div>
     </div>

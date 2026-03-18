@@ -115,5 +115,13 @@ export function usePunch(spaceId: string | null) {
     await fetchRecords();
   }, [fetchRecords]);
 
-  return { records, activePunch, loading, startPunch, endPunch, fetchRecords, deletePunch, updatePunchTime };
+  const addManualPunch = useCallback(async (startTime: string, endTime: string) => {
+    if (!spaceId) return;
+    await supabase
+      .from("punch_records")
+      .insert({ space_id: spaceId, start_time: startTime, end_time: endTime });
+    await fetchRecords();
+  }, [spaceId, fetchRecords]);
+
+  return { records, activePunch, loading, startPunch, endPunch, fetchRecords, deletePunch, updatePunchTime, addManualPunch };
 }
