@@ -85,5 +85,5 @@ export function useSpace() {
     }
   }, [spaceId]);
 
-  return { spaceId, dailyGoal, schedule, loading, enterSpace, exitSpace, updateGoal, updateSchedule };
+  return { spaceId, dailyGoal, schedule, loading, enterSpace, exitSpace, updateGoal, updateSchedule, checkSpaceExists };
 }

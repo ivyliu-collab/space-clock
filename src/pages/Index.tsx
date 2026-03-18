@@ -2,15 +2,16 @@ import { useSpace } from "@/hooks/useSpace";
 import SpaceEntry from "@/components/SpaceEntry";
 import Dashboard from "@/pages/Dashboard";
 import { AnimatePresence, motion } from "framer-motion";
+import { getStoredSpaceId } from "@/lib/space";
 
 const Index = () => {
-  const { spaceId, dailyGoal, schedule, loading, enterSpace, exitSpace, updateGoal, updateSchedule } = useSpace();
+  const { spaceId, dailyGoal, schedule, loading, enterSpace, exitSpace, updateGoal, updateSchedule, checkSpaceExists } = useSpace();
 
   return (
     <AnimatePresence mode="wait">
       {!spaceId ? (
         <motion.div key="entry" exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
-          <SpaceEntry onEnter={enterSpace} loading={loading} />
+          <SpaceEntry onEnter={enterSpace} onCheckExists={checkSpaceExists} loading={loading} savedSpaceId={getStoredSpaceId()} />
         </motion.div>
       ) : (
         <motion.div
