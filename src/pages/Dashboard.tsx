@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { createRoot, Root } from "react-dom/client";
 import { motion } from "framer-motion";
-import { Settings, Pencil, Minimize2 } from "lucide-react";
+import { Settings, Pencil, Minimize2, Plus } from "lucide-react";
 import PunchButton from "@/components/PunchButton";
 import CapsuleProgress from "@/components/CapsuleProgress";
 import WeeklyStats from "@/components/WeeklyStats";
@@ -10,6 +10,7 @@ import SettingsDrawer from "@/components/SettingsDrawer";
 import TimeEditDialog from "@/components/TimeEditDialog";
 import ClockOutCelebration from "@/components/ClockOutCelebration";
 import PipMiniWidget from "@/components/PipMiniWidget";
+import AddPunchDialog from "@/components/AddPunchDialog";
 import { usePunch } from "@/hooks/usePunch";
 import { usePictureInPicture } from "@/hooks/usePictureInPicture";
 import type { SpaceSchedule } from "@/hooks/useSpace";
@@ -24,10 +25,11 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, onScheduleChange, onExit }: DashboardProps) {
-  const { records, activePunch, loading, startPunch, endPunch, deletePunch, updatePunchTime } = usePunch(spaceId);
+  const { records, activePunch, loading, startPunch, endPunch, deletePunch, updatePunchTime, addManualPunch } = usePunch(spaceId);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [editingStart, setEditingStart] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [addPunchOpen, setAddPunchOpen] = useState(false);
   const { isOpen: pipOpen, openPip, closePip } = usePictureInPicture();
   const [pipRoot, setPipRoot] = useState<Root | null>(null);
 
