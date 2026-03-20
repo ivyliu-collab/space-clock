@@ -87,8 +87,14 @@ export default function WeeklyStats({ records, goalHours, goalStartTime, goalEnd
   const hasData = dailyIntervals.some((d) => d !== null);
 
   const { weekAvg, weeklyRemainingMsg } = useMemo(() => {
+    const now = new Date();
+    const todayStart = new Date(now);
+    todayStart.setHours(0, 0, 0, 0);
+
     let totalMs = 0;
     let daysWithData = 0;
+    let effectiveDays = 0; // days that count toward weekly goal
+
     weekDays.forEach((dayStart) => {
       const dayEnd = new Date(dayStart);
       dayEnd.setDate(dayStart.getDate() + 1);
@@ -105,14 +111,18 @@ export default function WeeklyStats({ records, goalHours, goalStartTime, goalEnd
       if (dayTotal > 0) {
         totalMs += dayTotal;
         daysWithData++;
+        effectiveDays++;
+      } else if (dayStart >= todayStart) {
+        // Future days (including today if no data yet) still count toward goal
+        effectiveDays++;
       }
+      // Past days with no data (e.g. leave) are excluded from goal
     });
 
     const totalWorkedHours = totalMs / 3600000;
-    const weeklyGoal = goalHours * 5;
+    const weeklyGoal = goalHours * effectiveDays;
     const remaining = weeklyGoal - totalWorkedHours;
 
-    const now = new Date();
     const todayDow = now.getDay();
     const friday = weekDays[4];
     const isFridayOrLater = todayDow >= 5 || todayDow === 0;
