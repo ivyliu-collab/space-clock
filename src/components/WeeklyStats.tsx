@@ -1,9 +1,12 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
+import { format } from "date-fns";
 import type { PunchRecord } from "@/hooks/usePunch";
+import type { LeaveRecord } from "@/hooks/useLeave";
 
 interface WeeklyStatsProps {
   records: PunchRecord[];
+  leaves?: LeaveRecord[];
   goalHours: number;
   goalStartTime: string;
   goalEndTime: string;
@@ -47,7 +50,7 @@ function SleepingCat() {
   );
 }
 
-export default function WeeklyStats({ records, goalHours, goalStartTime, goalEndTime }: WeeklyStatsProps) {
+export default function WeeklyStats({ records, leaves = [], goalHours, goalStartTime, goalEndTime }: WeeklyStatsProps) {
   const weekDays = useMemo(() => getWeekDays(), []);
 
   const goalStartMin = parseTime(goalStartTime);
@@ -56,6 +59,13 @@ export default function WeeklyStats({ records, goalHours, goalStartTime, goalEnd
   const viewStart = Math.max(goalStartMin - 60, 0);
   const viewEnd = Math.min(goalEndMin + 60, 24 * 60);
   const viewSpan = viewEnd - viewStart;
+
+  // Build a map of leave dates -> credit hours for this week
+  const leaveMap = useMemo(() => {
+    const map = new Map<string, number>();
+    leaves.forEach((l) => map.set(l.leave_date, l.credit_hours));
+    return map;
+  }, [leaves]);
 
   const dailyIntervals = useMemo(() => {
     return weekDays.map((dayStart) => {
@@ -92,12 +102,16 @@ export default function WeeklyStats({ records, goalHours, goalStartTime, goalEnd
     todayStart.setHours(0, 0, 0, 0);
 
     let totalMs = 0;
-    let daysWithData = 0;
+    let totalLeaveCredit = 0;
+    let daysWithData = 0; // days with actual punch data (for avg calc)
     let effectiveDays = 0; // days that count toward weekly goal
 
     weekDays.forEach((dayStart) => {
       const dayEnd = new Date(dayStart);
       dayEnd.setDate(dayStart.getDate() + 1);
+      const dateStr = format(dayStart, "yyyy-MM-dd");
+      const leaveCredit = leaveMap.get(dateStr);
+
       let dayTotal = 0;
       records.forEach((r) => {
         const start = new Date(r.start_time);
@@ -108,18 +122,27 @@ export default function WeeklyStats({ records, goalHours, goalStartTime, goalEnd
           dayTotal += ce - cs;
         }
       });
-      if (dayTotal > 0) {
+
+      if (leaveCredit !== undefined) {
+        // Has leave record: credit counts toward total, day counts toward goal
+        totalLeaveCredit += leaveCredit;
+        effectiveDays++;
+        if (dayTotal > 0) {
+          totalMs += dayTotal;
+          daysWithData++;
+        }
+      } else if (dayTotal > 0) {
         totalMs += dayTotal;
         daysWithData++;
         effectiveDays++;
       } else if (dayStart >= todayStart) {
-        // Future days (including today if no data yet) still count toward goal
+        // Future day (incl today with no data): counts toward goal
         effectiveDays++;
       }
-      // Past days with no data (e.g. leave) are excluded from goal
+      // Past day with no data and no leave: excluded (vacation/off)
     });
 
-    const totalWorkedHours = totalMs / 3600000;
+    const totalWorkedHours = totalMs / 3600000 + totalLeaveCredit;
     const weeklyGoal = goalHours * effectiveDays;
     const remaining = weeklyGoal - totalWorkedHours;
 
@@ -140,11 +163,12 @@ export default function WeeklyStats({ records, goalHours, goalStartTime, goalEnd
       }
     }
 
+    // weekAvg: only based on actual punch days (exclude leave-only days)
     return {
       weekAvg: daysWithData > 0 ? (totalMs / daysWithData / 3600000).toFixed(1) : "0",
       weeklyRemainingMsg,
     };
-  }, [records, weekDays, goalHours]);
+  }, [records, weekDays, goalHours, leaveMap]);
 
   function toPercent(min: number): number {
     return ((min - viewStart) / viewSpan) * 100;

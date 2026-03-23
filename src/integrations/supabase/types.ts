@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      leave_records: {
+        Row: {
+          created_at: string
+          credit_hours: number
+          id: string
+          leave_date: string
+          leave_type: string
+          space_id: string
+        }
+        Insert: {
+          created_at?: string
+          credit_hours?: number
+          id?: string
+          leave_date: string
+          leave_type: string
+          space_id: string
+        }
+        Update: {
+          created_at?: string
+          credit_hours?: number
+          id?: string
+          leave_date?: string
+          leave_type?: string
+          space_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leave_records_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["space_id"]
+          },
+        ]
+      }
       punch_records: {
         Row: {
           created_at: string

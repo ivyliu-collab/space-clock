@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { createRoot, Root } from "react-dom/client";
 import { motion } from "framer-motion";
-import { Settings, Pencil, Minimize2, Plus } from "lucide-react";
+import { Settings, Pencil, Minimize2, Plus, CalendarOff } from "lucide-react";
 import PunchButton from "@/components/PunchButton";
 import CapsuleProgress from "@/components/CapsuleProgress";
 import WeeklyStats from "@/components/WeeklyStats";
@@ -11,7 +11,9 @@ import TimeEditDialog from "@/components/TimeEditDialog";
 import ClockOutCelebration from "@/components/ClockOutCelebration";
 import PipMiniWidget from "@/components/PipMiniWidget";
 import AddPunchDialog from "@/components/AddPunchDialog";
+import LeavePage from "@/pages/LeavePage";
 import { usePunch } from "@/hooks/usePunch";
+import { useLeave } from "@/hooks/useLeave";
 import { usePictureInPicture } from "@/hooks/usePictureInPicture";
 import type { SpaceSchedule } from "@/hooks/useSpace";
 
@@ -26,10 +28,12 @@ interface DashboardProps {
 
 export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, onScheduleChange, onExit }: DashboardProps) {
   const { records, activePunch, loading, startPunch, endPunch, deletePunch, updatePunchTime, addManualPunch } = usePunch(spaceId);
+  const { leaves, addLeave, deleteLeave } = useLeave(spaceId);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [editingStart, setEditingStart] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [addPunchOpen, setAddPunchOpen] = useState(false);
+  const [showLeavePage, setShowLeavePage] = useState(false);
   const { isOpen: pipOpen, openPip, closePip } = usePictureInPicture();
   const [pipRoot, setPipRoot] = useState<Root | null>(null);
 
@@ -38,7 +42,6 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
     setShowCelebration(true);
   }, [endPunch]);
 
-  // Open PiP window
   const handleOpenPip = useCallback(async () => {
     const result = await openPip();
     if (result) {
@@ -47,7 +50,6 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
     }
   }, [openPip]);
 
-  // Render/update PiP content reactively
   useEffect(() => {
     if (pipRoot && activePunch) {
       pipRoot.render(
@@ -63,13 +65,25 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
     }
   }, [pipRoot, activePunch, dailyGoal, closePip]);
 
-  // Close PiP when punch ends
   useEffect(() => {
     if (!activePunch && pipOpen) {
       closePip();
       setPipRoot(null);
     }
   }, [activePunch, pipOpen, closePip]);
+
+  // Show leave page
+  if (showLeavePage) {
+    return (
+      <LeavePage
+        leaves={leaves}
+        records={records}
+        onAdd={addLeave}
+        onDelete={deleteLeave}
+        onBack={() => setShowLeavePage(false)}
+      />
+    );
+  }
 
   return (
     <div className="relative min-h-screen">
@@ -92,7 +106,6 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
             <p className="text-xs font-semibold text-muted-foreground">{spaceId}</p>
           </div>
           <div className="flex items-center gap-2">
-            {/* PiP button - show when active punch, desktop only */}
             {activePunch && !pipOpen && (
               <button
                 onClick={handleOpenPip}
@@ -139,11 +152,18 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
 
         {/* Weekly */}
         <div className="mb-6">
-          <WeeklyStats records={records} goalHours={dailyGoal} goalStartTime={schedule.goalStartTime} goalEndTime={schedule.goalEndTime} />
+          <WeeklyStats records={records} leaves={leaves} goalHours={dailyGoal} goalStartTime={schedule.goalStartTime} goalEndTime={schedule.goalEndTime} />
         </div>
 
-        {/* History with add punch button */}
-        <div className="mb-2 flex justify-end">
+        {/* History with leave + add punch buttons */}
+        <div className="mb-2 flex justify-end gap-2">
+          <button
+            onClick={() => setShowLeavePage(true)}
+            className="flex items-center gap-1 rounded-xl bg-muted/50 px-2.5 py-1 text-xs font-semibold text-muted-foreground transition-colors hover:bg-muted"
+          >
+            <CalendarOff className="h-3 w-3" />
+            请假
+          </button>
           <button
             onClick={() => setAddPunchOpen(true)}
             className="flex items-center gap-1 rounded-xl bg-muted/50 px-2.5 py-1 text-xs font-semibold text-muted-foreground transition-colors hover:bg-muted"
@@ -178,7 +198,6 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
         onExit={onExit}
       />
 
-      {/* Edit active punch start time */}
       {activePunch && editingStart && (
         <TimeEditDialog
           open
@@ -192,7 +211,6 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
         />
       )}
 
-      {/* Clock out celebration */}
       <ClockOutCelebration show={showCelebration} onComplete={() => setShowCelebration(false)} />
     </div>
   );
