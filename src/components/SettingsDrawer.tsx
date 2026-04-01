@@ -37,7 +37,7 @@ export default function SettingsDrawer({
       setUseCustomSchedule(false);
       setLocalStart("10:00");
       setLocalEnd("19:30");
-      onScheduleChange({ goalStartTime: "10:00", goalEndTime: "19:30" });
+      onScheduleChange({ goalStartTime: "10:00", goalEndTime: "19:30", overtimeStartTime: localOvertime });
     } else {
       setUseCustomSchedule(true);
     }
