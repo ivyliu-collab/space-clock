@@ -1,0 +1,1 @@
+ALTER TABLE public.spaces ADD COLUMN overtime_start_time text NOT NULL DEFAULT '21:00';

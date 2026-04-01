@@ -5,12 +5,13 @@ import { getStoredSpaceId, setStoredSpaceId, clearStoredSpaceId } from "@/lib/sp
 export interface SpaceSchedule {
   goalStartTime: string;
   goalEndTime: string;
+  overtimeStartTime: string;
 }
 
 export function useSpace() {
   const [spaceId, setSpaceId] = useState<string | null>(getStoredSpaceId());
   const [dailyGoal, setDailyGoal] = useState(8);
-  const [schedule, setSchedule] = useState<SpaceSchedule>({ goalStartTime: "10:00", goalEndTime: "19:30" });
+  const [schedule, setSchedule] = useState<SpaceSchedule>({ goalStartTime: "10:00", goalEndTime: "19:30", overtimeStartTime: "21:00" });
   const [loading, setLoading] = useState(false);
 
   const checkSpaceExists = useCallback(async (name: string): Promise<boolean> => {
@@ -38,6 +39,7 @@ export function useSpace() {
         setSchedule({
           goalStartTime: (data as any).goal_start_time ?? "10:00",
           goalEndTime: (data as any).goal_end_time ?? "19:30",
+          overtimeStartTime: (data as any).overtime_start_time ?? "21:00",
         });
       }
       setStoredSpaceId(name);
@@ -66,6 +68,7 @@ export function useSpace() {
       .update({
         goal_start_time: s.goalStartTime,
         goal_end_time: s.goalEndTime,
+        overtime_start_time: s.overtimeStartTime,
       } as any)
       .eq("space_id", spaceId);
   }, [spaceId]);
@@ -79,6 +82,7 @@ export function useSpace() {
           setSchedule({
             goalStartTime: (data as any).goal_start_time ?? "10:00",
             goalEndTime: (data as any).goal_end_time ?? "19:30",
+            overtimeStartTime: (data as any).overtime_start_time ?? "21:00",
           });
         }
       });

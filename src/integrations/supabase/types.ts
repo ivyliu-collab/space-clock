@@ -88,6 +88,7 @@ export type Database = {
           goal_end_time: string
           goal_start_time: string
           id: string
+          overtime_start_time: string
           space_id: string
         }
         Insert: {
@@ -96,6 +97,7 @@ export type Database = {
           goal_end_time?: string
           goal_start_time?: string
           id?: string
+          overtime_start_time?: string
           space_id: string
         }
         Update: {
@@ -104,6 +106,7 @@ export type Database = {
           goal_end_time?: string
           goal_start_time?: string
           id?: string
+          overtime_start_time?: string
           space_id?: string
         }
         Relationships: []
