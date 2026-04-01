@@ -44,7 +44,7 @@ export default function SettingsDrawer({
   }
 
   function handleTimeBlur() {
-    onScheduleChange({ goalStartTime: localStart, goalEndTime: localEnd });
+    onScheduleChange({ goalStartTime: localStart, goalEndTime: localEnd, overtimeStartTime: localOvertime });
   }
 
   return (
