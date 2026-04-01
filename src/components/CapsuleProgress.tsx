@@ -70,7 +70,7 @@ function StatusIcon({ done }: { done: boolean }) {
   );
 }
 
-export default function CapsuleProgress({ startTime, goalHours }: CapsuleProgressProps) {
+export default function CapsuleProgress({ startTime, goalHours, overtimeStartTime = "21:00" }: CapsuleProgressProps) {
   const [elapsed, setElapsed] = useState(0);
 
   useEffect(() => {
