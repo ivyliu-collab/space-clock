@@ -124,12 +124,12 @@ export default function WeeklyStats({ records, leaves = [], goalHours, goalStart
       });
 
       if (leaveCredit !== undefined) {
-        // Has leave record: credit counts toward total, day counts toward goal
+        // Has leave record: credit counts toward total, day counts toward goal & avg
         totalLeaveCredit += leaveCredit;
         effectiveDays++;
+        daysWithData++; // leave day counts toward average
         if (dayTotal > 0) {
           totalMs += dayTotal;
-          daysWithData++;
         }
       } else if (dayTotal > 0) {
         totalMs += dayTotal;
