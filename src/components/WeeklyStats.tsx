@@ -202,7 +202,7 @@ export default function WeeklyStats({ records, leaves = [], goalHours, goalStart
           <p className="text-sm font-semibold text-muted-foreground">本周还没开始努力哦~</p>
         </div>
       ) : (
-        <div className="flex flex-row items-end gap-0">
+        <div className="flex flex-row items-end gap-2">
           {/* Y-axis time labels */}
           <div className="relative h-32 w-8 mr-1 flex-shrink-0">
             <span
