@@ -163,9 +163,10 @@ export default function WeeklyStats({ records, leaves = [], goalHours, goalStart
       }
     }
 
-    // weekAvg: only based on actual punch days (exclude leave-only days)
+    // weekAvg: includes both actual punch hours and leave credits
+    const totalAvgHours = totalMs / 3600000 + totalLeaveCredit;
     return {
-      weekAvg: daysWithData > 0 ? (totalMs / daysWithData / 3600000).toFixed(1) : "0",
+      weekAvg: daysWithData > 0 ? (totalAvgHours / daysWithData).toFixed(1) : "0",
       weeklyRemainingMsg,
     };
   }, [records, weekDays, goalHours, leaveMap]);
