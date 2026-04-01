@@ -15,7 +15,7 @@ export default function ClockOutCelebration({ show, onComplete }: ClockOutCelebr
       const timer = setTimeout(() => {
         setVisible(false);
         onComplete();
-      }, 1400);
+      }, 2200);
       return () => clearTimeout(timer);
     }
   }, [show, onComplete]);
@@ -27,70 +27,85 @@ export default function ClockOutCelebration({ show, onComplete }: ClockOutCelebr
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.35 }}
           className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none"
+          style={{ paddingBottom: "20vh" }}
         >
-          {/* Golden glow backdrop */}
+          {/* Full-screen golden flash */}
           <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 2.5, opacity: [0, 0.3, 0] }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
-            className="absolute w-40 h-40 rounded-full"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0.15, 0] }}
+            transition={{ duration: 1.0, ease: "easeOut" }}
+            className="fixed inset-0"
             style={{
-              background: "radial-gradient(circle, hsl(45 90% 65% / 0.6) 0%, transparent 70%)",
+              background: "radial-gradient(ellipse at center 40%, hsl(45 90% 65% / 0.4) 0%, transparent 60%)",
             }}
           />
 
-          {/* Pixel stars burst */}
-          {[...Array(8)].map((_, i) => {
-            const angle = (i / 8) * Math.PI * 2;
-            const dist = 80 + Math.random() * 40;
+          {/* Large golden glow */}
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: [0, 3.5, 3], opacity: [0, 0.5, 0] }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+            className="absolute w-56 h-56 rounded-full"
+            style={{
+              background: "radial-gradient(circle, hsl(45 90% 65% / 0.7) 0%, hsl(35 80% 55% / 0.3) 40%, transparent 70%)",
+            }}
+          />
+
+          {/* Pixel stars burst - more particles, larger spread */}
+          {[...Array(14)].map((_, i) => {
+            const angle = (i / 14) * Math.PI * 2;
+            const dist = 100 + Math.random() * 60;
             return (
               <motion.span
                 key={i}
                 initial={{ scale: 0, x: 0, y: 0, opacity: 1 }}
                 animate={{
-                  scale: [0, 1.2, 0.8],
+                  scale: [0, 1.5, 1],
                   x: Math.cos(angle) * dist,
                   y: Math.sin(angle) * dist,
                   opacity: [1, 1, 0],
                 }}
-                transition={{ duration: 0.9, delay: 0.1 + i * 0.04, ease: "easeOut" }}
-                className="absolute text-lg"
+                transition={{ duration: 1.1, delay: 0.08 + i * 0.03, ease: "easeOut" }}
+                className="absolute text-2xl"
                 style={{ imageRendering: "pixelated" }}
               >
-                {["⭐", "✨", "🌟", "💫"][i % 4]}
+                {["⭐", "✨", "🌟", "💫", "🎉"][i % 5]}
               </motion.span>
             );
           })}
 
-          {/* Main "叮！" text */}
+          {/* Main "叮！" text - much larger */}
           <motion.div
-            initial={{ scale: 0, rotate: -10 }}
+            initial={{ scale: 0, rotate: -12 }}
             animate={{
-              scale: [0, 1.3, 1],
-              rotate: [-10, 5, 0],
+              scale: [0, 1.5, 1.2],
+              rotate: [-12, 6, 0],
             }}
-            transition={{ type: "spring", stiffness: 400, damping: 12, delay: 0.05 }}
+            transition={{ type: "spring", stiffness: 350, damping: 10, delay: 0.05 }}
             className="relative z-10 flex flex-col items-center"
           >
             <span
-              className="text-5xl font-bold"
+              className="text-7xl md:text-8xl font-bold"
               style={{
-                background: "linear-gradient(135deg, hsl(35 80% 55%), hsl(45 90% 65%))",
+                background: "linear-gradient(135deg, hsl(35 80% 55%), hsl(45 95% 65%), hsl(30 90% 60%))",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
-                filter: "drop-shadow(0 2px 8px hsl(35 80% 60% / 0.4))",
+                filter: "drop-shadow(0 4px 16px hsl(35 80% 60% / 0.6))",
                 fontFamily: "'Quicksand', sans-serif",
               }}
             >
               叮！
             </span>
             <motion.span
-              initial={{ opacity: 0, y: 8 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="mt-1 text-sm font-semibold text-muted-foreground"
+              transition={{ delay: 0.4, duration: 0.4 }}
+              className="mt-2 text-base md:text-lg font-semibold text-muted-foreground"
+              style={{
+                filter: "drop-shadow(0 1px 4px hsl(35 80% 60% / 0.3))",
+              }}
             >
               辛苦啦，下班咯 🏡
             </motion.span>
