@@ -5,6 +5,7 @@ import { getStoredSpaceId, setStoredSpaceId, clearStoredSpaceId } from "@/lib/sp
 export interface SpaceSchedule {
   goalStartTime: string;
   goalEndTime: string;
+  overtimeStartTime: string;
 }
 
 export function useSpace() {
