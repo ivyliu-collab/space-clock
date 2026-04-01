@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 interface CapsuleProgressProps {
   startTime: string;
   goalHours: number;
+  overtimeStartTime?: string;
 }
 
 /* Animated single digit that slides when changing */
