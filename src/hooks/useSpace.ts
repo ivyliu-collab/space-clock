@@ -39,6 +39,7 @@ export function useSpace() {
         setSchedule({
           goalStartTime: (data as any).goal_start_time ?? "10:00",
           goalEndTime: (data as any).goal_end_time ?? "19:30",
+          overtimeStartTime: (data as any).overtime_start_time ?? "21:00",
         });
       }
       setStoredSpaceId(name);
