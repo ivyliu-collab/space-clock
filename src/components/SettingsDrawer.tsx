@@ -29,6 +29,7 @@ export default function SettingsDrawer({
   );
   const [localStart, setLocalStart] = useState(schedule.goalStartTime);
   const [localEnd, setLocalEnd] = useState(schedule.goalEndTime);
+  const [localOvertime, setLocalOvertime] = useState(schedule.overtimeStartTime);
 
   function handleToggleCustom() {
     if (useCustomSchedule) {
