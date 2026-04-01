@@ -146,7 +146,7 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
                 调整开始时间
               </button>
             </div>
-            <CapsuleProgress startTime={activePunch.start_time} goalHours={dailyGoal} />
+            <CapsuleProgress startTime={activePunch.start_time} goalHours={dailyGoal} overtimeStartTime={schedule.overtimeStartTime} />
           </div>
         )}
 
