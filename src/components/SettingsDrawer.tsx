@@ -151,9 +151,27 @@ export default function SettingsDrawer({
                   </motion.div>
                 )}
               </AnimatePresence>
-              {!useCustomSchedule && (
+            {!useCustomSchedule && (
                 <p className="text-xs text-muted-foreground">默认 10:00 - 19:30</p>
               )}
+            </div>
+
+            {/* Overtime start time */}
+            <div className="mb-8">
+              <label className="mb-3 block text-sm font-semibold text-muted-foreground">
+                加班起算时间
+              </label>
+              <div className="flex items-center gap-3 rounded-2xl bg-muted/50 p-3">
+                <input
+                  type="time"
+                  value={localOvertime}
+                  onChange={(e) => setLocalOvertime(e.target.value)}
+                  onBlur={() => onScheduleChange({ goalStartTime: localStart, goalEndTime: localEnd, overtimeStartTime: localOvertime })}
+                  className="rounded-xl bg-background/80 px-3 py-2 text-sm font-bold text-foreground border border-border outline-none"
+                />
+                <span className="text-xs text-muted-foreground">之后显示加班鼓励</span>
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">默认 21:00</p>
             </div>
 
             <button
