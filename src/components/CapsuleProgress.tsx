@@ -91,9 +91,18 @@ export default function CapsuleProgress({ startTime, goalHours, overtimeStartTim
   const etaDate = new Date(new Date(startTime).getTime() + goalMs);
   const etaStr = `${String(etaDate.getHours()).padStart(2, "0")}:${String(etaDate.getMinutes()).padStart(2, "0")}`;
 
+  // Check if current time is past overtime threshold
+  const now = new Date();
+  const [otH, otM] = overtimeStartTime.split(":").map(Number);
+  const overtimeThreshold = new Date(now);
+  overtimeThreshold.setHours(otH, otM, 0, 0);
+  const isOvertime = now >= overtimeThreshold;
+
   const encouragement = progress >= 1
     ? "🎉 目标达成！太棒了！"
-    : `坚持住！还有 ${remainH} 小时 ${remainM} 分钟就能到钟啦 🥂`;
+    : isOvertime
+      ? "🌙 又是辛苦加班的一天，辛苦啦 💪"
+      : `坚持住！还有 ${remainH} 小时 ${remainM} 分钟就能到钟啦 🥂`;
 
   return (
     <motion.div
