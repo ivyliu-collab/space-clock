@@ -202,66 +202,65 @@ export default function WeeklyStats({ records, leaves = [], goalHours, goalStart
           <p className="text-sm font-semibold text-muted-foreground">本周还没开始努力哦~</p>
         </div>
       ) : (
-        <div className="flex flex-col gap-3">
-          {dailyIntervals.map((interval, i) => {
-            const goalLeft = toPercent(goalStartMin);
-            const goalWidth = toPercent(goalEndMin) - goalLeft;
+        <div className="flex flex-row items-end gap-0">
+          {/* Y-axis time labels */}
+          <div className="relative h-32 w-8 mr-1 flex-shrink-0">
+            <span
+              className="absolute left-0 text-[9px] font-semibold text-muted-foreground/60 -translate-y-1/2"
+              style={{ bottom: `${toPercent(goalEndMin)}%` }}
+            >
+              {goalEndTime}
+            </span>
+            <span
+              className="absolute left-0 text-[9px] font-semibold text-muted-foreground/60 -translate-y-1/2"
+              style={{ bottom: `${toPercent(goalStartMin)}%` }}
+            >
+              {goalStartTime}
+            </span>
+          </div>
 
-            let actualLeft = 0;
-            let actualWidth = 0;
+          {/* Day columns */}
+          {dailyIntervals.map((interval, i) => {
+            const goalBottom = toPercent(goalStartMin);
+            const goalHeight = toPercent(goalEndMin) - goalBottom;
+
+            let actualBottom = 0;
+            let actualHeight = 0;
             if (interval) {
-              actualLeft = toPercent(Math.max(interval.earliest, viewStart));
-              const actualRight = toPercent(Math.min(interval.latest, viewEnd));
-              actualWidth = actualRight - actualLeft;
+              actualBottom = toPercent(Math.max(interval.earliest, viewStart));
+              const actualTop = toPercent(Math.min(interval.latest, viewEnd));
+              actualHeight = actualTop - actualBottom;
             }
 
             return (
-              <div key={i} className="flex items-center gap-2">
-                <span className="w-4 text-center text-[10px] font-semibold text-muted-foreground">
-                  {DAY_LABELS[i]}
-                </span>
-                <div className="relative h-5 flex-1 rounded-full bg-muted/40 overflow-hidden">
+              <div key={i} className="flex flex-1 flex-col items-center gap-1.5">
+                <div className="relative h-32 w-full rounded-xl bg-muted/40 overflow-hidden">
                   {/* Goal range */}
                   <div
-                    className="absolute inset-y-0 rounded-full bg-primary/25"
-                    style={{ left: `${goalLeft}%`, width: `${goalWidth}%` }}
+                    className="absolute inset-x-0 rounded-xl bg-primary/25"
+                    style={{ bottom: `${goalBottom}%`, height: `${goalHeight}%` }}
                   />
                   {/* Actual range */}
                   {interval && (
                     <motion.div
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: 1 }}
+                      initial={{ scaleY: 0 }}
+                      animate={{ scaleY: 1 }}
                       transition={{ delay: i * 0.06, type: "spring", stiffness: 120, damping: 16 }}
-                      className="absolute inset-y-1 rounded-full bg-secondary/70"
+                      className="absolute inset-x-1 rounded-lg bg-secondary/70"
                       style={{
-                        left: `${actualLeft}%`,
-                        width: `${actualWidth}%`,
-                        transformOrigin: "left",
+                        bottom: `${actualBottom}%`,
+                        height: `${actualHeight}%`,
+                        transformOrigin: "bottom",
                       }}
                     />
                   )}
                 </div>
+                <span className="text-[10px] font-semibold text-muted-foreground">
+                  {DAY_LABELS[i]}
+                </span>
               </div>
             );
           })}
-          {/* Time markers */}
-          <div className="flex items-center gap-2">
-            <span className="w-4" />
-            <div className="relative flex-1 h-3">
-              <span
-                className="absolute text-[9px] font-semibold text-muted-foreground/60 -translate-x-1/2"
-                style={{ left: `${toPercent(goalStartMin)}%` }}
-              >
-                {goalStartTime}
-              </span>
-              <span
-                className="absolute text-[9px] font-semibold text-muted-foreground/60 -translate-x-1/2"
-                style={{ left: `${toPercent(goalEndMin)}%` }}
-              >
-                {goalEndTime}
-              </span>
-            </div>
-          </div>
         </div>
       )}
     </motion.div>
