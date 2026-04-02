@@ -205,6 +205,12 @@ export default function WeeklyStats({ records, leaves = [], goalHours, goalStart
         </div>
       )}
 
+      <motion.div
+        initial={false}
+        animate={{ height: chartOpen ? "auto" : 0, opacity: chartOpen ? 1 : 0 }}
+        transition={{ duration: 0.25, ease: "easeInOut" }}
+        className="overflow-hidden"
+      >
       {!hasData ? (
         <div className="flex flex-col items-center gap-2 py-4">
           <SleepingCat />
