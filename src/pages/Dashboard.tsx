@@ -36,6 +36,7 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
   const [showCelebration, setShowCelebration] = useState(false);
   const [addPunchOpen, setAddPunchOpen] = useState(false);
   const [showLeavePage, setShowLeavePage] = useState(false);
+  const [showMonthValue, setShowMonthValue] = useState(false);
   const [duplicateRecord, setDuplicateRecord] = useState<PunchRecord | null>(null);
   const { isOpen: pipOpen, openPip, closePip } = usePictureInPicture();
   const [pipRoot, setPipRoot] = useState<Root | null>(null);
