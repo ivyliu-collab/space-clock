@@ -98,6 +98,15 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
     );
   }
 
+  if (showMonthValue) {
+    return (
+      <MonthValuePage
+        leaves={leaves}
+        onBack={() => setShowMonthValue(false)}
+      />
+    );
+  }
+
   return (
     <div className="relative min-h-screen">
       {/* Decorative */}
