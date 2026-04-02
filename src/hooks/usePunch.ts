@@ -75,6 +75,17 @@ export function usePunch(spaceId: string | null) {
     return () => clearInterval(id);
   }, [activePunch, fetchRecords]);
 
+  /** Check if there's already a record for today */
+  const getTodayRecord = useCallback((): PunchRecord | null => {
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    return records.find((r) => {
+      const d = new Date(r.start_time);
+      const rStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      return rStr === todayStr && !!r.end_time; // only completed records count
+    }) || null;
+  }, [records]);
+
   const startPunch = useCallback(async () => {
     if (!spaceId) return;
     setLoading(true);
@@ -87,6 +98,36 @@ export function usePunch(spaceId: string | null) {
       setActivePunch(data as PunchRecord);
       await fetchRecords();
     }
+    setLoading(false);
+  }, [spaceId, fetchRecords]);
+
+  /** Delete old record and start fresh */
+  const replaceAndStart = useCallback(async (oldId: string) => {
+    if (!spaceId) return;
+    setLoading(true);
+    await supabase.from("punch_records").delete().eq("id", oldId);
+    const { data } = await supabase
+      .from("punch_records")
+      .insert({ space_id: spaceId })
+      .select()
+      .single();
+    if (data) {
+      setActivePunch(data as PunchRecord);
+      await fetchRecords();
+    }
+    setLoading(false);
+  }, [spaceId, fetchRecords]);
+
+  /** Continue from old record's start time */
+  const continueFromOld = useCallback(async (oldId: string) => {
+    if (!spaceId) return;
+    setLoading(true);
+    // Re-open the old record by clearing its end_time
+    await supabase
+      .from("punch_records")
+      .update({ end_time: null })
+      .eq("id", oldId);
+    await fetchRecords();
     setLoading(false);
   }, [spaceId, fetchRecords]);
 
@@ -123,5 +164,5 @@ export function usePunch(spaceId: string | null) {
     await fetchRecords();
   }, [spaceId, fetchRecords]);
 
-  return { records, activePunch, loading, startPunch, endPunch, fetchRecords, deletePunch, updatePunchTime, addManualPunch };
+  return { records, activePunch, loading, startPunch, endPunch, fetchRecords, deletePunch, updatePunchTime, addManualPunch, getTodayRecord, replaceAndStart, continueFromOld };
 }

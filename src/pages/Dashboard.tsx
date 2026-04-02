@@ -11,8 +11,9 @@ import TimeEditDialog from "@/components/TimeEditDialog";
 import ClockOutCelebration from "@/components/ClockOutCelebration";
 import PipMiniWidget from "@/components/PipMiniWidget";
 import AddPunchDialog from "@/components/AddPunchDialog";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import LeavePage from "@/pages/LeavePage";
-import { usePunch } from "@/hooks/usePunch";
+import { usePunch, PunchRecord } from "@/hooks/usePunch";
 import { useLeave } from "@/hooks/useLeave";
 import { usePictureInPicture } from "@/hooks/usePictureInPicture";
 import type { SpaceSchedule } from "@/hooks/useSpace";
@@ -27,15 +28,25 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, onScheduleChange, onExit }: DashboardProps) {
-  const { records, activePunch, loading, startPunch, endPunch, deletePunch, updatePunchTime, addManualPunch } = usePunch(spaceId);
+  const { records, activePunch, loading, startPunch, endPunch, deletePunch, updatePunchTime, addManualPunch, getTodayRecord, replaceAndStart, continueFromOld } = usePunch(spaceId);
   const { leaves, addLeave, deleteLeave } = useLeave(spaceId);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [editingStart, setEditingStart] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [addPunchOpen, setAddPunchOpen] = useState(false);
   const [showLeavePage, setShowLeavePage] = useState(false);
+  const [duplicateRecord, setDuplicateRecord] = useState<PunchRecord | null>(null);
   const { isOpen: pipOpen, openPip, closePip } = usePictureInPicture();
   const [pipRoot, setPipRoot] = useState<Root | null>(null);
+
+  const handleStartPunch = useCallback(() => {
+    const existing = getTodayRecord();
+    if (existing) {
+      setDuplicateRecord(existing);
+    } else {
+      startPunch();
+    }
+  }, [getTodayRecord, startPunch]);
 
   const handleEndPunch = useCallback(async () => {
     await endPunch();
@@ -128,7 +139,7 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
         <div className="mb-6 flex justify-center">
           <PunchButton
             isActive={!!activePunch}
-            onStart={startPunch}
+            onStart={handleStartPunch}
             onEnd={handleEndPunch}
             loading={loading}
           />
@@ -212,6 +223,27 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
       )}
 
       <ClockOutCelebration show={showCelebration} onComplete={() => setShowCelebration(false)} />
+
+      {/* Duplicate punch confirmation */}
+      <ConfirmDialog
+        open={!!duplicateRecord}
+        title="今日已有打卡记录"
+        description="今天已经有一条打卡记录了，你可以选择删除旧记录重新开始，或者继续之前的打卡。"
+        confirmLabel="删除旧记录，重新打卡"
+        onConfirm={async () => {
+          if (duplicateRecord) {
+            await replaceAndStart(duplicateRecord.id);
+          }
+          setDuplicateRecord(null);
+        }}
+        onCancel={async () => {
+          if (duplicateRecord) {
+            await continueFromOld(duplicateRecord.id);
+          }
+          setDuplicateRecord(null);
+        }}
+        cancelLabel="继续之前的打卡"
+      />
     </div>
   );
 }
