@@ -183,12 +183,20 @@ export default function WeeklyStats({ records, leaves = [], goalHours, goalStart
       transition={{ delay: 0.1 }}
       className="glass-card p-6 card-hover"
     >
-      <div className="mb-4 flex items-center justify-between">
+      <button
+        onClick={() => setChartOpen((v) => !v)}
+        className="mb-4 flex w-full items-center justify-between"
+      >
         <h3 className="text-sm font-bold text-foreground">本周概览</h3>
-        <span className="text-xs font-semibold text-muted-foreground">
-          周均 {weekAvg}h
-        </span>
-      </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold text-muted-foreground">
+            周均 {weekAvg}h
+          </span>
+          <ChevronDown
+            className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${chartOpen ? "rotate-0" : "-rotate-90"}`}
+          />
+        </div>
+      </button>
 
       {/* Weekly remaining prediction */}
       {weeklyRemainingMsg && (
