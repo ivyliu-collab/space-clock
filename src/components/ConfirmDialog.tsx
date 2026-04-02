@@ -38,7 +38,7 @@ export default function ConfirmDialog({
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onCancel} className="rounded-2xl">取消</AlertDialogCancel>
+          <AlertDialogCancel onClick={onCancel} className="rounded-2xl">{cancelLabel}</AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
             className={`rounded-2xl ${destructive ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : "bg-secondary text-secondary-foreground hover:bg-secondary/90"}`}
