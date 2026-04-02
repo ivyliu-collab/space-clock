@@ -180,6 +180,13 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
         {/* History with leave + add punch buttons */}
         <div className="mb-2 flex justify-end gap-2">
           <button
+            onClick={() => setShowMonthValue(true)}
+            className="flex items-center gap-1 rounded-xl bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary transition-colors hover:bg-primary/20"
+          >
+            <TrendingUp className="h-3 w-3" />
+            本月性价比
+          </button>
+          <button
             onClick={() => setShowLeavePage(true)}
             className="flex items-center gap-1 rounded-xl bg-muted/50 px-2.5 py-1 text-xs font-semibold text-muted-foreground transition-colors hover:bg-muted"
           >
