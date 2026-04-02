@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { createRoot, Root } from "react-dom/client";
 import { motion } from "framer-motion";
-import { Settings, Pencil, Minimize2, Plus, CalendarOff } from "lucide-react";
+import { Settings, Pencil, Minimize2, Plus, CalendarOff, TrendingUp } from "lucide-react";
 import PunchButton from "@/components/PunchButton";
 import CapsuleProgress from "@/components/CapsuleProgress";
 import WeeklyStats from "@/components/WeeklyStats";
