@@ -11,8 +11,9 @@ import TimeEditDialog from "@/components/TimeEditDialog";
 import ClockOutCelebration from "@/components/ClockOutCelebration";
 import PipMiniWidget from "@/components/PipMiniWidget";
 import AddPunchDialog from "@/components/AddPunchDialog";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import LeavePage from "@/pages/LeavePage";
-import { usePunch } from "@/hooks/usePunch";
+import { usePunch, PunchRecord } from "@/hooks/usePunch";
 import { useLeave } from "@/hooks/useLeave";
 import { usePictureInPicture } from "@/hooks/usePictureInPicture";
 import type { SpaceSchedule } from "@/hooks/useSpace";
@@ -27,15 +28,25 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, onScheduleChange, onExit }: DashboardProps) {
-  const { records, activePunch, loading, startPunch, endPunch, deletePunch, updatePunchTime, addManualPunch } = usePunch(spaceId);
+  const { records, activePunch, loading, startPunch, endPunch, deletePunch, updatePunchTime, addManualPunch, getTodayRecord, replaceAndStart, continueFromOld } = usePunch(spaceId);
   const { leaves, addLeave, deleteLeave } = useLeave(spaceId);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [editingStart, setEditingStart] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [addPunchOpen, setAddPunchOpen] = useState(false);
   const [showLeavePage, setShowLeavePage] = useState(false);
+  const [duplicateRecord, setDuplicateRecord] = useState<PunchRecord | null>(null);
   const { isOpen: pipOpen, openPip, closePip } = usePictureInPicture();
   const [pipRoot, setPipRoot] = useState<Root | null>(null);
+
+  const handleStartPunch = useCallback(() => {
+    const existing = getTodayRecord();
+    if (existing) {
+      setDuplicateRecord(existing);
+    } else {
+      startPunch();
+    }
+  }, [getTodayRecord, startPunch]);
 
   const handleEndPunch = useCallback(async () => {
     await endPunch();
