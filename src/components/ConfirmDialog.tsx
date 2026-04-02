@@ -27,6 +27,7 @@ export default function ConfirmDialog({
   onConfirm,
   onCancel,
   confirmLabel = "确认",
+  cancelLabel = "取消",
   destructive = false,
 }: ConfirmDialogProps) {
   return (
