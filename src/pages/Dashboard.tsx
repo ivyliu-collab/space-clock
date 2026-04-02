@@ -139,7 +139,7 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
         <div className="mb-6 flex justify-center">
           <PunchButton
             isActive={!!activePunch}
-            onStart={startPunch}
+            onStart={handleStartPunch}
             onEnd={handleEndPunch}
             loading={loading}
           />
