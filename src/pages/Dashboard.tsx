@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { createRoot, Root } from "react-dom/client";
 import { motion } from "framer-motion";
-import { Settings, Pencil, Minimize2, Plus, CalendarOff } from "lucide-react";
+import { Settings, Pencil, Minimize2, Plus, CalendarOff, TrendingUp } from "lucide-react";
 import PunchButton from "@/components/PunchButton";
 import CapsuleProgress from "@/components/CapsuleProgress";
 import WeeklyStats from "@/components/WeeklyStats";
@@ -13,6 +13,7 @@ import PipMiniWidget from "@/components/PipMiniWidget";
 import AddPunchDialog from "@/components/AddPunchDialog";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import LeavePage from "@/pages/LeavePage";
+import MonthValuePage from "@/pages/MonthValuePage";
 import { usePunch, PunchRecord } from "@/hooks/usePunch";
 import { useLeave } from "@/hooks/useLeave";
 import { usePictureInPicture } from "@/hooks/usePictureInPicture";
@@ -35,6 +36,7 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
   const [showCelebration, setShowCelebration] = useState(false);
   const [addPunchOpen, setAddPunchOpen] = useState(false);
   const [showLeavePage, setShowLeavePage] = useState(false);
+  const [showMonthValue, setShowMonthValue] = useState(false);
   const [duplicateRecord, setDuplicateRecord] = useState<PunchRecord | null>(null);
   const { isOpen: pipOpen, openPip, closePip } = usePictureInPicture();
   const [pipRoot, setPipRoot] = useState<Root | null>(null);
@@ -92,6 +94,15 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
         onAdd={addLeave}
         onDelete={deleteLeave}
         onBack={() => setShowLeavePage(false)}
+      />
+    );
+  }
+
+  if (showMonthValue) {
+    return (
+      <MonthValuePage
+        leaves={leaves}
+        onBack={() => setShowMonthValue(false)}
       />
     );
   }
@@ -168,6 +179,13 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
 
         {/* History with leave + add punch buttons */}
         <div className="mb-2 flex justify-end gap-2">
+          <button
+            onClick={() => setShowMonthValue(true)}
+            className="flex items-center gap-1 rounded-xl bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary transition-colors hover:bg-primary/20"
+          >
+            <TrendingUp className="h-3 w-3" />
+            本月性价比
+          </button>
           <button
             onClick={() => setShowLeavePage(true)}
             className="flex items-center gap-1 rounded-xl bg-muted/50 px-2.5 py-1 text-xs font-semibold text-muted-foreground transition-colors hover:bg-muted"
