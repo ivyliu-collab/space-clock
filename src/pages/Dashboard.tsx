@@ -223,6 +223,27 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
       )}
 
       <ClockOutCelebration show={showCelebration} onComplete={() => setShowCelebration(false)} />
+
+      {/* Duplicate punch confirmation */}
+      <ConfirmDialog
+        open={!!duplicateRecord}
+        title="今日已有打卡记录"
+        description="今天已经有一条打卡记录了，你可以选择删除旧记录重新开始，或者继续之前的打卡。"
+        confirmLabel="删除旧记录，重新打卡"
+        onConfirm={async () => {
+          if (duplicateRecord) {
+            await replaceAndStart(duplicateRecord.id);
+          }
+          setDuplicateRecord(null);
+        }}
+        onCancel={async () => {
+          if (duplicateRecord) {
+            await continueFromOld(duplicateRecord.id);
+          }
+          setDuplicateRecord(null);
+        }}
+        cancelLabel="继续之前的打卡"
+      />
     </div>
   );
 }
