@@ -54,6 +54,7 @@ function SleepingCat() {
 export default function WeeklyStats({ records, leaves = [], goalHours, goalStartTime, goalEndTime }: WeeklyStatsProps) {
   const weekDays = useMemo(() => getWeekDays(), []);
 
+  const [chartOpen, setChartOpen] = useState(true);
   const goalStartMin = parseTime(goalStartTime);
   const goalEndMin = parseTime(goalEndTime);
 
