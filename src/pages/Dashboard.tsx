@@ -13,6 +13,7 @@ import PipMiniWidget from "@/components/PipMiniWidget";
 import AddPunchDialog from "@/components/AddPunchDialog";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import LeavePage from "@/pages/LeavePage";
+import MonthValuePage from "@/pages/MonthValuePage";
 import { usePunch, PunchRecord } from "@/hooks/usePunch";
 import { useLeave } from "@/hooks/useLeave";
 import { usePictureInPicture } from "@/hooks/usePictureInPicture";
