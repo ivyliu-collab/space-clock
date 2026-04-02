@@ -1,4 +1,5 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import type { PunchRecord } from "@/hooks/usePunch";
@@ -53,6 +54,7 @@ function SleepingCat() {
 export default function WeeklyStats({ records, leaves = [], goalHours, goalStartTime, goalEndTime }: WeeklyStatsProps) {
   const weekDays = useMemo(() => getWeekDays(), []);
 
+  const [chartOpen, setChartOpen] = useState(true);
   const goalStartMin = parseTime(goalStartTime);
   const goalEndMin = parseTime(goalEndTime);
 
@@ -182,12 +184,20 @@ export default function WeeklyStats({ records, leaves = [], goalHours, goalStart
       transition={{ delay: 0.1 }}
       className="glass-card p-6 card-hover"
     >
-      <div className="mb-4 flex items-center justify-between">
+      <button
+        onClick={() => setChartOpen((v) => !v)}
+        className="mb-4 flex w-full items-center justify-between"
+      >
         <h3 className="text-sm font-bold text-foreground">本周概览</h3>
-        <span className="text-xs font-semibold text-muted-foreground">
-          周均 {weekAvg}h
-        </span>
-      </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold text-muted-foreground">
+            周均 {weekAvg}h
+          </span>
+          <ChevronDown
+            className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${chartOpen ? "rotate-0" : "-rotate-90"}`}
+          />
+        </div>
+      </button>
 
       {/* Weekly remaining prediction */}
       {weeklyRemainingMsg && (
@@ -196,6 +206,12 @@ export default function WeeklyStats({ records, leaves = [], goalHours, goalStart
         </div>
       )}
 
+      <motion.div
+        initial={false}
+        animate={{ height: chartOpen ? "auto" : 0, opacity: chartOpen ? 1 : 0 }}
+        transition={{ duration: 0.25, ease: "easeInOut" }}
+        className="overflow-hidden"
+      >
       {!hasData ? (
         <div className="flex flex-col items-center gap-2 py-4">
           <SleepingCat />
@@ -263,6 +279,7 @@ export default function WeeklyStats({ records, leaves = [], goalHours, goalStart
           })}
         </div>
       )}
+      </motion.div>
     </motion.div>
   );
 }
