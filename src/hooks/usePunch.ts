@@ -164,5 +164,5 @@ export function usePunch(spaceId: string | null) {
     await fetchRecords();
   }, [spaceId, fetchRecords]);
 
-  return { records, activePunch, loading, startPunch, endPunch, fetchRecords, deletePunch, updatePunchTime, addManualPunch };
+  return { records, activePunch, loading, startPunch, endPunch, fetchRecords, deletePunch, updatePunchTime, addManualPunch, getTodayRecord, replaceAndStart, continueFromOld };
 }
