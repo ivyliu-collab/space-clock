@@ -279,6 +279,7 @@ export default function WeeklyStats({ records, leaves = [], goalHours, goalStart
           })}
         </div>
       )}
+      </motion.div>
     </motion.div>
   );
 }
