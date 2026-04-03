@@ -352,6 +352,7 @@ function StatCard({
   sub,
   sub2,
   infoAction,
+  leaveDetails,
 }: {
   icon: React.ReactNode;
   label: string;
@@ -362,6 +363,7 @@ function StatCard({
   sub?: string;
   sub2?: string;
   infoAction?: () => void;
+  leaveDetails?: string[];
 }) {
   return (
     <motion.div
