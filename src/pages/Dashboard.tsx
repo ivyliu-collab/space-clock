@@ -184,7 +184,7 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
         <div className="mb-2 flex justify-end gap-2">
           <button
             onClick={() => setShowMonthValue(true)}
-            className="flex items-center gap-1 rounded-xl bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary transition-colors hover:bg-primary/20"
+            className="flex items-center gap-1 rounded-xl bg-gradient-to-r from-candy-orange/20 to-candy-orange/10 px-2.5 py-1 text-xs font-bold text-candy-orange transition-colors hover:from-candy-orange/30 hover:to-candy-orange/20"
           >
             <TrendingUp className="h-3 w-3" />
             本月性价比
