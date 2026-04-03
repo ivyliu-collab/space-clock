@@ -165,47 +165,62 @@ export default function MonthValuePage({
 
         {/* Stats grid - 2x2 */}
         <div className="grid grid-cols-2 gap-3 mb-5">
+          {/* 工作日 (主) + 总天数 (副) */}
           <StatCard
             icon={<Briefcase className="h-4 w-4" />}
-            label="总天数"
-            value={`${stats.totalDays}`}
-            unit="天"
-            colorClass="bg-primary/10 text-primary"
-            delay={0.1}
-          />
-          <StatCard
-            icon={<TrendingUp className="h-4 w-4" />}
             label="工作日"
             value={`${stats.workdays}`}
             unit="天"
-            colorClass="bg-secondary/10 text-secondary"
-            delay={0.15}
-            sub={
+            colorClass="bg-primary/10 text-primary"
+            delay={0.1}
+            sub={`📅 本月共 ${stats.totalDays} 天`}
+            sub2={
               leaveDayCount > 0
-                ? `请假${leaveDayCount}天后实际${actualWorkDays}天`
+                ? `请假后实际 ${actualWorkDays} 天`
                 : undefined
             }
           />
-          {/* Holidays + makeup merged */}
+          {/* 节假日 + 调休 */}
           <StatCard
             icon={<PartyPopper className="h-4 w-4" />}
             label="节假日"
             value={`${stats.holidays.length}`}
             unit="天"
             colorClass="bg-candy-orange/10 text-candy-orange"
-            delay={0.2}
-            sub={
-              holidayName
-                ? `🎊 ${holidayName}`
-                : undefined
-            }
+            delay={0.15}
+            sub={holidayName ? `🎊 ${holidayName}` : undefined}
             sub2={
               stats.makeupDays.length > 0
                 ? `😤 调休 ${stats.makeupDays.length} 天`
                 : "😎 无调休"
             }
           />
-          {/* Overtime stats - replaces old makeup card */}
+          {/* 请假 */}
+          <StatCard
+            icon={<CalendarOff className="h-4 w-4" />}
+            label="本月请假"
+            value={`${leaveDayCount}`}
+            unit="天"
+            colorClass="bg-secondary/10 text-secondary"
+            delay={0.2}
+            sub={leaveDayCount === 0 ? "🐂 劳模就是你" : undefined}
+            leaveDetails={
+              leaveDaysThisMonth.length > 0
+                ? leaveDaysThisMonth.map((l) => {
+                    const d = new Date(l.leave_date + "T00:00:00");
+                    const dayNum = d.getDate();
+                    const typeLabel =
+                      l.leave_type === "morning"
+                        ? "上午"
+                        : l.leave_type === "afternoon"
+                        ? "下午"
+                        : "全天";
+                    return `${month}/${dayNum} ${typeLabel} ${l.credit_hours}h`;
+                  })
+                : undefined
+            }
+          />
+          {/* 加班 */}
           <StatCard
             icon={<Flame className="h-4 w-4" />}
             label="本月加班"
@@ -218,53 +233,6 @@ export default function MonthValuePage({
             infoAction={() => setShowCategoryInfo(true)}
           />
         </div>
-
-        {/* Leave info */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="glass-card p-5 mb-5"
-        >
-          <div className="flex items-center gap-2 mb-3">
-            <CalendarOff className="h-4 w-4 text-primary" />
-            <h3 className="text-sm font-bold text-foreground">本月请假</h3>
-          </div>
-          {leaveDayCount === 0 ? (
-            <div className="text-center py-4">
-              <p className="text-2xl mb-1">🐂</p>
-              <p className="text-xs text-muted-foreground">
-                本月没有请假，劳模就是你！
-              </p>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-1">
-              {leaveDaysThisMonth.map((l) => {
-                const d = new Date(l.leave_date + "T00:00:00");
-                const dayNum = d.getDate();
-                const typeLabel =
-                  l.leave_type === "morning"
-                    ? "上午"
-                    : l.leave_type === "afternoon"
-                    ? "下午"
-                    : "全天";
-                return (
-                  <div
-                    key={l.id}
-                    className="flex items-center justify-between rounded-xl bg-muted/30 px-3 py-2"
-                  >
-                    <span className="text-xs font-semibold text-foreground">
-                      {month}月{dayNum}日
-                    </span>
-                    <span className="text-[10px] font-semibold text-muted-foreground">
-                      {typeLabel} · {l.credit_hours}h
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </motion.div>
 
         {/* Fun tip */}
         <motion.div
