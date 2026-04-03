@@ -396,6 +396,13 @@ function StatCard({
       {sub2 && (
         <p className="text-[10px] text-muted-foreground mt-0.5">{sub2}</p>
       )}
+      {leaveDetails && leaveDetails.length > 0 && (
+        <div className="mt-1.5 w-full flex flex-col gap-0.5">
+          {leaveDetails.map((d, i) => (
+            <p key={i} className="text-[9px] text-muted-foreground text-center">{d}</p>
+          ))}
+        </div>
+      )}
     </motion.div>
   );
 }
