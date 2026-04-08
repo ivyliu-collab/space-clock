@@ -12,7 +12,7 @@ export interface SpaceSchedule {
 export function useSpace() {
   const [spaceId, setSpaceId] = useState<string | null>(getStoredSpaceId());
   const [dailyGoal, setDailyGoal] = useState(8);
-  const [schedule, setSchedule] = useState<SpaceSchedule>({ goalStartTime: "10:00", goalEndTime: "19:30", overtimeStartTime: "21:00" });
+  const [schedule, setSchedule] = useState<SpaceSchedule>({ goalStartTime: "10:00", goalEndTime: "19:30", overtimeStartTime: "21:00", city: "上海" });
   const [loading, setLoading] = useState(false);
 
   const checkSpaceExists = useCallback(async (name: string): Promise<boolean> => {
