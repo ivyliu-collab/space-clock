@@ -73,7 +73,6 @@ export default function MonthValuePage({
   const restDays = stats.totalDays - actualWorkDays;
 
   // Overtime / on-time stats
-  const goalEndMin = useMemo(() => hmToMin(goalEndTime), [goalEndTime]);
   const otStartMin = useMemo(() => hmToMin(overtimeStartTime), [overtimeStartTime]);
 
   const monthRecords = useMemo(() => {
