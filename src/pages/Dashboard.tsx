@@ -104,7 +104,7 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
         leaves={leaves}
         records={records}
         overtimeStartTime={schedule.overtimeStartTime}
-        goalEndTime={schedule.goalEndTime}
+        dailyGoalHours={dailyGoal}
         onBack={() => setShowMonthValue(false)}
       />
     );

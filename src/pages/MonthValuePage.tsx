@@ -19,7 +19,7 @@ interface MonthValuePageProps {
   leaves: LeaveRecord[];
   records: PunchRecord[];
   overtimeStartTime: string; // e.g. "21:00"
-  goalEndTime: string; // e.g. "19:30"
+  dailyGoalHours: number; // e.g. 8
   onBack: () => void;
 }
 
