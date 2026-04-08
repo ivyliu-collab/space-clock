@@ -6,6 +6,7 @@ export interface SpaceSchedule {
   goalStartTime: string;
   goalEndTime: string;
   overtimeStartTime: string;
+  city: string;
 }
 
 export function useSpace() {
