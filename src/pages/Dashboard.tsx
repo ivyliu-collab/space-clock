@@ -150,14 +150,18 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
           </div>
         </motion.div>
 
-        {/* Punch */}
-        <div className="mb-6 flex justify-center">
+        {/* Punch + Weather */}
+        <div className="mb-6 flex items-center justify-center gap-6">
+          <div className="w-20 flex justify-end">
+            <WeatherWidget city={schedule.city} />
+          </div>
           <PunchButton
             isActive={!!activePunch}
             onStart={handleStartPunch}
             onEnd={handleEndPunch}
             loading={loading}
           />
+          <div className="w-20" />
         </div>
 
         {/* Progress with edit button for active punch */}
