@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import type { SpaceSchedule } from "@/hooks/useSpace";
+import { CITIES } from "@/lib/cities";
 
 interface SettingsDrawerProps {
   open: boolean;
@@ -30,21 +31,26 @@ export default function SettingsDrawer({
   const [localStart, setLocalStart] = useState(schedule.goalStartTime);
   const [localEnd, setLocalEnd] = useState(schedule.goalEndTime);
   const [localOvertime, setLocalOvertime] = useState(schedule.overtimeStartTime);
+  const [localCity, setLocalCity] = useState(schedule.city);
 
   function handleToggleCustom() {
     if (useCustomSchedule) {
-      // Reset to defaults
       setUseCustomSchedule(false);
       setLocalStart("10:00");
       setLocalEnd("19:30");
-      onScheduleChange({ goalStartTime: "10:00", goalEndTime: "19:30", overtimeStartTime: localOvertime });
+      onScheduleChange({ goalStartTime: "10:00", goalEndTime: "19:30", overtimeStartTime: localOvertime, city: localCity });
     } else {
       setUseCustomSchedule(true);
     }
   }
 
   function handleTimeBlur() {
-    onScheduleChange({ goalStartTime: localStart, goalEndTime: localEnd, overtimeStartTime: localOvertime });
+    onScheduleChange({ goalStartTime: localStart, goalEndTime: localEnd, overtimeStartTime: localOvertime, city: localCity });
+  }
+
+  function handleCityChange(cityName: string) {
+    setLocalCity(cityName);
+    onScheduleChange({ goalStartTime: localStart, goalEndTime: localEnd, overtimeStartTime: localOvertime, city: cityName });
   }
 
   return (
@@ -80,6 +86,25 @@ export default function SettingsDrawer({
               <div className="rounded-2xl bg-muted px-4 py-3 text-sm font-bold text-foreground">
                 {spaceId}
               </div>
+            </div>
+
+            {/* City */}
+            <div className="mb-8">
+              <label className="mb-2 block text-sm font-semibold text-muted-foreground">
+                🌤️ 所在城市
+              </label>
+              <select
+                value={localCity}
+                onChange={(e) => handleCityChange(e.target.value)}
+                className="w-full rounded-2xl bg-muted px-4 py-3 text-sm font-bold text-foreground border border-border outline-none appearance-none cursor-pointer"
+              >
+                {CITIES.map((c) => (
+                  <option key={c.name} value={c.name}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1 text-xs text-muted-foreground">用于获取天气和日落时间</p>
             </div>
 
             <div className="mb-8">
@@ -151,7 +176,7 @@ export default function SettingsDrawer({
                   </motion.div>
                 )}
               </AnimatePresence>
-            {!useCustomSchedule && (
+              {!useCustomSchedule && (
                 <p className="text-xs text-muted-foreground">默认 10:00 - 19:30</p>
               )}
             </div>
@@ -166,7 +191,7 @@ export default function SettingsDrawer({
                   type="time"
                   value={localOvertime}
                   onChange={(e) => setLocalOvertime(e.target.value)}
-                  onBlur={() => onScheduleChange({ goalStartTime: localStart, goalEndTime: localEnd, overtimeStartTime: localOvertime })}
+                  onBlur={() => onScheduleChange({ goalStartTime: localStart, goalEndTime: localEnd, overtimeStartTime: localOvertime, city: localCity })}
                   className="rounded-xl bg-background/80 px-3 py-2 text-sm font-bold text-foreground border border-border outline-none"
                 />
                 <span className="text-xs text-muted-foreground">之后显示加班鼓励</span>
