@@ -33,14 +33,17 @@ type ClockOutCategory = "overtime" | "strict" | "normal";
 
 function categorizeRecord(
   rec: PunchRecord,
-  goalEndMin: number,
+  dailyGoalHours: number,
   otStartMin: number
 ): ClockOutCategory | null {
   if (!rec.end_time) return null;
+  const start = new Date(rec.start_time);
+  const expectedEnd = new Date(start.getTime() + dailyGoalHours * 3600_000);
+  const expectedEndMin = expectedEnd.getHours() * 60 + expectedEnd.getMinutes();
   const end = new Date(rec.end_time);
   const endMin = end.getHours() * 60 + end.getMinutes();
   if (endMin >= otStartMin) return "overtime";
-  if (endMin <= goalEndMin + 10) return "strict";
+  if (endMin <= expectedEndMin + 10) return "strict";
   return "normal";
 }
 
