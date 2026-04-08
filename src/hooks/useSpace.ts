@@ -71,6 +71,7 @@ export function useSpace() {
         goal_start_time: s.goalStartTime,
         goal_end_time: s.goalEndTime,
         overtime_start_time: s.overtimeStartTime,
+        city: s.city,
       } as any)
       .eq("space_id", spaceId);
   }, [spaceId]);
