@@ -83,6 +83,7 @@ export type Database = {
       }
       spaces: {
         Row: {
+          city: string
           created_at: string
           daily_goal_hours: number
           goal_end_time: string
@@ -92,6 +93,7 @@ export type Database = {
           space_id: string
         }
         Insert: {
+          city?: string
           created_at?: string
           daily_goal_hours?: number
           goal_end_time?: string
@@ -101,6 +103,7 @@ export type Database = {
           space_id: string
         }
         Update: {
+          city?: string
           created_at?: string
           daily_goal_hours?: number
           goal_end_time?: string
