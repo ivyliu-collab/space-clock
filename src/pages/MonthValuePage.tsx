@@ -51,7 +51,7 @@ export default function MonthValuePage({
   leaves,
   records,
   overtimeStartTime,
-  goalEndTime,
+  dailyGoalHours,
   onBack,
 }: MonthValuePageProps) {
   const now = new Date();
