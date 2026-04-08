@@ -281,8 +281,8 @@ export default function MonthValuePage({
         onClose={() => setShowCategoryInfo(false)}
         title="下班分类说明"
         lines={[
-          `🎯 准点下班：下班时间在目标时间（${goalEndTime}）10分钟内`,
-          `☕ 正常下班：下班时间在准点之后、加班时间（${overtimeStartTime}）之前`,
+          `🎯 准点下班：下班时间在当日到钟时间（打卡开始+${dailyGoalHours}h）10分钟内`,
+          `☕ 正常下班：下班时间在到钟之后、加班时间（${overtimeStartTime}）之前`,
           `🔥 加班：下班时间在${overtimeStartTime}之后`,
         ]}
       />
