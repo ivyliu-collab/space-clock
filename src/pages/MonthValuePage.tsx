@@ -85,7 +85,7 @@ export default function MonthValuePage({
     let strict = 0;
     let normal = 0;
     for (const r of monthRecords) {
-      const cat = categorizeRecord(r, goalEndMin, otStartMin);
+      const cat = categorizeRecord(r, dailyGoalHours, otStartMin);
       if (cat === "overtime") overtime++;
       else if (cat === "strict") strict++;
       else if (cat === "normal") normal++;
