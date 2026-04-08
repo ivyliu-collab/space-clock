@@ -91,7 +91,7 @@ export default function MonthValuePage({
       else if (cat === "normal") normal++;
     }
     return { overtime, strict, normal };
-  }, [monthRecords, goalEndMin, otStartMin]);
+  }, [monthRecords, dailyGoalHours, otStartMin]);
 
   // Improved value ratio:
   // Base ratio = restDays / totalDays (higher = more rest = better)
