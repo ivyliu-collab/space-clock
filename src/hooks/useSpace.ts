@@ -6,12 +6,13 @@ export interface SpaceSchedule {
   goalStartTime: string;
   goalEndTime: string;
   overtimeStartTime: string;
+  city: string;
 }
 
 export function useSpace() {
   const [spaceId, setSpaceId] = useState<string | null>(getStoredSpaceId());
   const [dailyGoal, setDailyGoal] = useState(8);
-  const [schedule, setSchedule] = useState<SpaceSchedule>({ goalStartTime: "10:00", goalEndTime: "19:30", overtimeStartTime: "21:00" });
+  const [schedule, setSchedule] = useState<SpaceSchedule>({ goalStartTime: "10:00", goalEndTime: "19:30", overtimeStartTime: "21:00", city: "上海" });
   const [loading, setLoading] = useState(false);
 
   const checkSpaceExists = useCallback(async (name: string): Promise<boolean> => {
@@ -40,6 +41,7 @@ export function useSpace() {
           goalStartTime: (data as any).goal_start_time ?? "10:00",
           goalEndTime: (data as any).goal_end_time ?? "19:30",
           overtimeStartTime: (data as any).overtime_start_time ?? "21:00",
+          city: (data as any).city ?? "上海",
         });
       }
       setStoredSpaceId(name);
@@ -69,6 +71,7 @@ export function useSpace() {
         goal_start_time: s.goalStartTime,
         goal_end_time: s.goalEndTime,
         overtime_start_time: s.overtimeStartTime,
+        city: s.city,
       } as any)
       .eq("space_id", spaceId);
   }, [spaceId]);
@@ -83,6 +86,7 @@ export function useSpace() {
             goalStartTime: (data as any).goal_start_time ?? "10:00",
             goalEndTime: (data as any).goal_end_time ?? "19:30",
             overtimeStartTime: (data as any).overtime_start_time ?? "21:00",
+            city: (data as any).city ?? "上海",
           });
         }
       });

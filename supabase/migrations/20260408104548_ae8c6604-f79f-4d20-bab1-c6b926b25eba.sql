@@ -1,0 +1,1 @@
+ALTER TABLE public.spaces ADD COLUMN city text NOT NULL DEFAULT '上海';
