@@ -19,7 +19,7 @@ interface MonthValuePageProps {
   leaves: LeaveRecord[];
   records: PunchRecord[];
   overtimeStartTime: string; // e.g. "21:00"
-  goalEndTime: string; // e.g. "19:30"
+  dailyGoalHours: number; // e.g. 8
   onBack: () => void;
 }
 
@@ -33,14 +33,17 @@ type ClockOutCategory = "overtime" | "strict" | "normal";
 
 function categorizeRecord(
   rec: PunchRecord,
-  goalEndMin: number,
+  dailyGoalHours: number,
   otStartMin: number
 ): ClockOutCategory | null {
   if (!rec.end_time) return null;
+  const start = new Date(rec.start_time);
+  const expectedEnd = new Date(start.getTime() + dailyGoalHours * 3600_000);
+  const expectedEndMin = expectedEnd.getHours() * 60 + expectedEnd.getMinutes();
   const end = new Date(rec.end_time);
   const endMin = end.getHours() * 60 + end.getMinutes();
   if (endMin >= otStartMin) return "overtime";
-  if (endMin <= goalEndMin + 10) return "strict";
+  if (endMin <= expectedEndMin + 10) return "strict";
   return "normal";
 }
 
@@ -48,7 +51,7 @@ export default function MonthValuePage({
   leaves,
   records,
   overtimeStartTime,
-  goalEndTime,
+  dailyGoalHours,
   onBack,
 }: MonthValuePageProps) {
   const now = new Date();
@@ -70,7 +73,6 @@ export default function MonthValuePage({
   const restDays = stats.totalDays - actualWorkDays;
 
   // Overtime / on-time stats
-  const goalEndMin = useMemo(() => hmToMin(goalEndTime), [goalEndTime]);
   const otStartMin = useMemo(() => hmToMin(overtimeStartTime), [overtimeStartTime]);
 
   const monthRecords = useMemo(() => {
@@ -83,13 +85,13 @@ export default function MonthValuePage({
     let strict = 0;
     let normal = 0;
     for (const r of monthRecords) {
-      const cat = categorizeRecord(r, goalEndMin, otStartMin);
+      const cat = categorizeRecord(r, dailyGoalHours, otStartMin);
       if (cat === "overtime") overtime++;
       else if (cat === "strict") strict++;
       else if (cat === "normal") normal++;
     }
     return { overtime, strict, normal };
-  }, [monthRecords, goalEndMin, otStartMin]);
+  }, [monthRecords, dailyGoalHours, otStartMin]);
 
   // Improved value ratio:
   // Base ratio = restDays / totalDays (higher = more rest = better)
@@ -279,8 +281,8 @@ export default function MonthValuePage({
         onClose={() => setShowCategoryInfo(false)}
         title="下班分类说明"
         lines={[
-          `🎯 准点下班：下班时间在目标时间（${goalEndTime}）10分钟内`,
-          `☕ 正常下班：下班时间在准点之后、加班时间（${overtimeStartTime}）之前`,
+          `🎯 准点下班：下班时间在当日到钟时间（打卡开始+${dailyGoalHours}h）10分钟内`,
+          `☕ 正常下班：下班时间在到钟之后、加班时间（${overtimeStartTime}）之前`,
           `🔥 加班：下班时间在${overtimeStartTime}之后`,
         ]}
       />
