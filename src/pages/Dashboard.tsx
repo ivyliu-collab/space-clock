@@ -3,6 +3,7 @@ import { createRoot, Root } from "react-dom/client";
 import { motion } from "framer-motion";
 import { Settings, Pencil, Minimize2, Plus, CalendarOff, TrendingUp } from "lucide-react";
 import WeatherWidget from "@/components/WeatherWidget";
+import SunsetReminder from "@/components/SunsetReminder";
 import PunchButton from "@/components/PunchButton";
 import CapsuleProgress from "@/components/CapsuleProgress";
 import WeeklyStats from "@/components/WeeklyStats";
@@ -18,6 +19,7 @@ import MonthValuePage from "@/pages/MonthValuePage";
 import { usePunch, PunchRecord } from "@/hooks/usePunch";
 import { useLeave } from "@/hooks/useLeave";
 import { usePictureInPicture } from "@/hooks/usePictureInPicture";
+import { useWeather } from "@/hooks/useWeather";
 import type { SpaceSchedule } from "@/hooks/useSpace";
 
 interface DashboardProps {
@@ -41,6 +43,7 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
   const [duplicateRecord, setDuplicateRecord] = useState<PunchRecord | null>(null);
   const { isOpen: pipOpen, openPip, closePip } = usePictureInPicture();
   const [pipRoot, setPipRoot] = useState<Root | null>(null);
+  const { data: weatherData } = useWeather(schedule.city);
 
   const handleStartPunch = useCallback(() => {
     const existing = getTodayRecord();
@@ -249,6 +252,7 @@ export default function Dashboard({ spaceId, dailyGoal, schedule, onGoalChange, 
       )}
 
       <ClockOutCelebration show={showCelebration} onComplete={() => setShowCelebration(false)} />
+      {weatherData?.sunset && <SunsetReminder sunsetTime={weatherData.sunset} />}
 
       {/* Duplicate punch confirmation */}
       <ConfirmDialog
